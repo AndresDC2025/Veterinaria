@@ -15,9 +15,5 @@ public class VeterinariaApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(VeterinariaApplication.class, args);
-	}
-<<<<<<< HEAD
-	/* 
-	Dg tay entera rica  test test test test test test test test 
-	*/
+	}	
 }
