@@ -11,9 +11,6 @@ public class VeterinariaApplication {
 	}
 <<<<<<< HEAD
 	/* 
-	Dg tay entera rica 
+	Dg tay entera rica  test test 
 	*/
-=======
-	//dominga hermosura hehe
->>>>>>> 84f5c1f1a79f9f97830202c10d4bf21dff268fe6
 }
