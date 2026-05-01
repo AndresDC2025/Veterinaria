@@ -22,20 +22,6 @@ public class UsuarioService {
         return WebClient.builder().build();
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
     public List<UsuarioResponseDTO> getAll(){
         List<UsuarioResponseDTO> listaUsuarios = new ArrayList<>();
 

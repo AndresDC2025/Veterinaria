@@ -11,14 +11,18 @@ import com.example.Veterinaria_.dto.UsuarioResponseDTO;
 import com.example.Veterinaria_.service.UsuarioService;
 
 @RestController
-@RequestMapping("/api/v1/usuarios")
+@RequestMapping("/api/v1/usuario")
 public class UsuarioController {
     @Autowired
     private UsuarioService service;
 
     @GetMapping
-    public List<UsuarioResponseDTO> getMethodName() {
+    public List<UsuarioResponseDTO> getAll(){
         return service.getAll();
     }
         
+    @GetMapping("/test")
+        public String test() {
+        return "OK";
+}   
 }
