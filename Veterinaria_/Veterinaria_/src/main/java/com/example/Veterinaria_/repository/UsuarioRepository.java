@@ -1,5 +1,5 @@
 package com.example.Veterinaria_.repository;
 
-public class UsuarioRepository {
+public interface UsuarioRepository {
 
 }
