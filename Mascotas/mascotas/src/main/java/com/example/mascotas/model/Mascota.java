@@ -22,7 +22,5 @@ public class Mascota {
     private String nombre;
     private String raza;
     private int edad;
-    private String nacimiento;
-
 
 }
