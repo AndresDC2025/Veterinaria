@@ -20,11 +20,25 @@ public class UsuarioController {
     @Autowired
     private UsuarioService service;
 
+    // Para crear un nuevo usuario
+    @PostMapping
+    public UsuarioResponseDTO save(@RequestBody UsuarioResponseDTO datos) {
+        return service.crearUsuario(datos);
+    }
+
+    // Para obtener todos los usuarios
     @GetMapping
     public List<UsuarioResponseDTO> getAll(){
         return service.getAll();
     }
 
+    // Para obtener un usuario por su nombre
+    @GetMapping("/nombre/{nombre}")
+    public List<UsuarioResponseDTO> getByNombre(@PathVariable String nombre) {
+        return service.findByNombre(nombre);
+    }
+
+    // Para eliminar un usuario por su RUT
     @DeleteMapping("/rut/{rut}")
         public void deleteByRut(@PathVariable String rut){
         service.deleteByRut(rut);
@@ -34,14 +48,4 @@ public class UsuarioController {
         service.deleteById(id);
     }
 
-    @GetMapping("/nombre/{nombre}")
-    public List<UsuarioResponseDTO> getByNombre(@PathVariable String nombre) {
-        return service.findByNombre(nombre);
-}
-    @PostMapping
-    public UsuarioResponseDTO save(@RequestBody UsuarioResponseDTO datos) {
-        return service.crearUsuario(datos);
-    }
-
-    
 }

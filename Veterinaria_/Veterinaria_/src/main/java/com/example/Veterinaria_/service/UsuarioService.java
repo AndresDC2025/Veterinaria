@@ -39,8 +39,6 @@ public class UsuarioService {
         return listaUsuarios;
     }
 
-
-
     public void deleteByRut(String rut){
     repository.deleteByRut(rut);
     }
@@ -63,11 +61,10 @@ public class UsuarioService {
         dto.setTelefono(u.getTelefono());
         dto.setDireccion(u.getDireccion());
         response.add(dto);
-    }
-
-    return response;
 }
 
+        return response;
+    }
 
 public UsuarioResponseDTO crearUsuario(UsuarioResponseDTO datos) {
     // 1. Creamos la entidad Usuario (Modelo)
@@ -93,8 +90,6 @@ public UsuarioResponseDTO crearUsuario(UsuarioResponseDTO datos) {
     respuesta.setDireccion(usuarioGuardado.getDireccion());
 
     return respuesta;
-}
+    }
 
 }
-    
-
