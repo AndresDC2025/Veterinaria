@@ -29,7 +29,7 @@ public class UsuarioController {
     // Para obtener todos los usuarios
     @GetMapping
     public List<UsuarioResponseDTO> getAll(){
-        return service.getAll();
+        return service.getAll();    
     }
 
     // Para obtener un usuario por su nombre

@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 
 public interface MascotaRepository extends JpaRepository<Mascota, Long>{
 
+
     @Transactional
     void deleteById(Long id);
 

@@ -1,10 +1,7 @@
 package com.example.mascotas.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +15,6 @@ public class MascotaService {
     @Autowired
     private MascotaRepository repository;
 
-    // Esta es la solución que aplicaste en Usuario: el Bean dentro del Service
-    @Bean
-    public WebClient webClient() {
-        return WebClient.builder().build();
-    }
 
     public List<MascotaResponseDTO> getAll() {
         List<MascotaResponseDTO> listaMascotas = new ArrayList<>();
@@ -39,6 +31,8 @@ public class MascotaService {
         
         return listaMascotas;
     }
+
+    
 
 
 }
