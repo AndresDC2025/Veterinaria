@@ -48,7 +48,7 @@ public class UsuarioService {
 
     private MascotaDTO getMascota(Integer id) {
         return webClient().get()
-        .uri("http://localhost:8085/api/v1/mascota/" + id)
+        .uri("http://localhost:8085/api/v1/mascotas/" + id)
         .retrieve()
         .bodyToMono(MascotaDTO.class)
         .block();
