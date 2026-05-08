@@ -28,12 +28,5 @@ public class VeterinariosService {
     public Veterinarios getById(Long id){
         return repository.findById(id).get();
     }
-    
-    public Veterinarios getByName(String nombre){
-        return repository.findByNombre(nombre).getString();
-    }
-
-    
-
 
 }
