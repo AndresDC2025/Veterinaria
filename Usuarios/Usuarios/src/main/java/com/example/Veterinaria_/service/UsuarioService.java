@@ -12,6 +12,9 @@ import com.example.Veterinaria_.dto.UsuarioResponseDTO;
 import com.example.Veterinaria_.model.Usuario;
 import com.example.Veterinaria_.repository.UsuarioRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class UsuarioService {
 

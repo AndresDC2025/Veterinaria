@@ -8,6 +8,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.example.Veterinarios.model.Veterinarios;
 import com.example.Veterinarios.repository.VeterinariosRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+
+
+@Slf4j
 @Service
 public class VeterinariosService {
     

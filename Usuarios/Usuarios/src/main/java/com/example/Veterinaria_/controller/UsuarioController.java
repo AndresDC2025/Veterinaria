@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.Veterinaria_.dto.UsuarioResponseDTO;
 import com.example.Veterinaria_.service.UsuarioService;
 
+import lombok.extern.slf4j.Slf4j;
+
+
+
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/usuario")
 public class UsuarioController {

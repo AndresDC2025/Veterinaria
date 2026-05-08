@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.mascotas.model.Mascota;
 import com.example.mascotas.service.MascotaService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/mascotas")
 public class MascotaController {
