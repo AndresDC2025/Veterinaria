@@ -1,4 +1,4 @@
-package com.example.mascotas.security;
+package com.example.Veterinaria_.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

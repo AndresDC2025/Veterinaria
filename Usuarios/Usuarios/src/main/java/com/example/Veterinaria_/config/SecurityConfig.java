@@ -1,12 +1,11 @@
-package com.example.mascotas.config;
-
+package com.example.Veterinaria_.config;
 
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.*;
 
-import com.example.mascotas.security.JwtFilter;
+import com.example.Veterinaria_.security.JwtFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,11 +18,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-import com.example.mascotas.dto.ApiResponse;
+import com.example.Veterinaria_.dto.ApiResponse;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableMethodSecurity
+
+
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;

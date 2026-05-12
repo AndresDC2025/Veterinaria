@@ -9,7 +9,7 @@ public class MascotaDTO {
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    @NotBlank(message = " es obligatorio")
+    @NotBlank(message = "La raza es obligatoria")
     private String raza;
 
     @NotNull(message = "La edad es obligatoria")

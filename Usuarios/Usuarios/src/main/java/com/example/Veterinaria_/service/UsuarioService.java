@@ -1,114 +1,95 @@
 package com.example.Veterinaria_.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-
-import com.example.Veterinaria_.dto.MascotaDTO;
-import com.example.Veterinaria_.dto.UsuarioResponseDTO;
+import com.example.Veterinaria_.client.MascotaClient;
+import com.example.Veterinaria_.dto.UsuarioResponse;
+import com.example.Veterinaria_.dto.UsuariosDTO;
 import com.example.Veterinaria_.model.Usuario;
 import com.example.Veterinaria_.repository.UsuarioRepository;
-
+import jakarta.persistence.EntityNotFoundException;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import static net.logstash.logback.argument.StructuredArguments.keyValue;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
+@Slf4j
+@Builder
 public class UsuarioService {
 
-    @Autowired
-    private UsuarioRepository repository;  
+    private final UsuarioRepository repo;
+    private final MascotaClient mascotaClient;
 
-    // Configuración del WebClient para realizar peticiones HTTP
-    @Bean
-    public WebClient webClient() {
-        return WebClient.builder().build();
-    }
+    public UsuarioResponse crear(UsuariosDTO dto, String token) {
+        log.info("Creando Usuario", keyValue("nombre", dto.getNombre()));
 
-    public List<UsuarioResponseDTO> getAll() {
-        List<UsuarioResponseDTO> listaUsuarios = new ArrayList<>();
+        // Validar que la mascota exista en el otro microservicio
+        var mascota = mascotaClient.obtenerMascota(dto.getId_mascota(), token);
 
-        for (Usuario u : repository.findAll()) {
-            UsuarioResponseDTO usuario = new UsuarioResponseDTO();
-            usuario.setId(u.getId());
-            usuario.setNombre(u.getNombre());
-            usuario.setRut(u.getRut());
-            usuario.setEmail(u.getEmail());
-            usuario.setTelefono(u.getTelefono());
-            usuario.setDireccion(u.getDireccion());
-            MascotaDTO mascota = getMascota(u.getId_mascota());
-            usuario.setMascota(mascota);
-
-            // LLAMADA AL MICROSERVICIO DE MASCOTAS
-            // Se usa el id_mascota guardado en la base de datos de usuarios
-
-            listaUsuarios.add(usuario);
-        }
-        return listaUsuarios;
-    }
-
-    private MascotaDTO getMascota(Integer id) {
-        return webClient().get()
-        .uri("http://localhost:8085/api/v1/mascotas/" + id)
-        .retrieve()
-        .bodyToMono(MascotaDTO.class)
-        .block();
-    }
-
-
-    
-
-    public void deleteByRut(String rut) {
-        repository.deleteByRut(rut);
-    }
-
-    public void deleteById(Long id) {
-        repository.deleteById(id);
-    }
-
-    public List<UsuarioResponseDTO> findByNombre(String nombre) {
-        List<Usuario> lista = repository.findByNombre(nombre);
-        List<UsuarioResponseDTO> response = new ArrayList<>();
-
-        for (Usuario u : lista) {
-            UsuarioResponseDTO dto = new UsuarioResponseDTO();
-            dto.setId(u.getId());
-            dto.setNombre(u.getNombre());
-            dto.setRut(u.getRut());
-            dto.setEmail(u.getEmail());
-            dto.setTelefono(u.getTelefono());
-            dto.setDireccion(u.getDireccion());
-            dto.setMascota(getMascota(u.getId_mascota()));
-            response.add(dto);
-        }
-        return response;
-    }
-
-    public UsuarioResponseDTO crearUsuario(UsuarioResponseDTO datos) {
-        Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.setNombre(datos.getNombre());
-        nuevoUsuario.setRut(datos.getRut());
-        nuevoUsuario.setEmail(datos.getEmail());
-        nuevoUsuario.setTelefono(datos.getTelefono());
-        nuevoUsuario.setDireccion(datos.getDireccion());
-        
-        // Si el DTO trae una mascota, guardamos su ID (asegúrate de tener este campo en tu modelo)
-        if (datos.getMascota() != null) {
-            nuevoUsuario.setId_mascota(datos.getMascota().getId().intValue());
+        if (mascota == null) {
+            throw new RuntimeException("La mascota con ID " + dto.getId_mascota() + " no existe.");
         }
 
-        Usuario usuarioGuardado = repository.save(nuevoUsuario);
+        Usuario usuario = repo.save(
+                new Usuario(null, dto.getNombre(), dto.getRut(), dto.getEmail(), 
+                            dto.getTelefono(), dto.getDireccion(), dto.getId_mascota())
+        );
 
-        UsuarioResponseDTO respuesta = new UsuarioResponseDTO();
-        respuesta.setId(usuarioGuardado.getId());
-        respuesta.setNombre(usuarioGuardado.getNombre());
-        respuesta.setRut(usuarioGuardado.getRut());
-        respuesta.setEmail(usuarioGuardado.getEmail());
-        respuesta.setTelefono(usuarioGuardado.getTelefono());
-        respuesta.setDireccion(usuarioGuardado.getDireccion());
-        
-        return respuesta;
+        return mapToResponse(usuario, token);
+    }
+
+    public List<UsuarioResponse> listar(String token) {
+        return repo.findAll()
+                .stream()
+                .map(u -> mapToResponse(u, token))
+                .toList();
+    }
+
+    public UsuarioResponse obtener(Long id, String token) {
+        Usuario usuario = repo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        return mapToResponse(usuario, token);
+    }
+
+    public UsuarioResponse actualizar(Long id, UsuariosDTO dto, String token) {
+        Usuario usuarioExistente = repo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        // Validar nueva mascota si se cambió el ID
+        var mascota = mascotaClient.obtenerMascota(dto.getId_mascota(), token);
+        if (mascota == null) {
+            throw new RuntimeException("Mascota no encontrada");
+        }
+
+        usuarioExistente.setNombre(dto.getNombre());
+        usuarioExistente.setRut(dto.getRut());
+        usuarioExistente.setEmail(dto.getEmail());
+        usuarioExistente.setTelefono(dto.getTelefono());
+        usuarioExistente.setDireccion(dto.getDireccion());
+        usuarioExistente.setId_mascota(dto.getId_mascota());
+
+        return mapToResponse(repo.save(usuarioExistente), token);
+    }
+
+    public void eliminar(Long id) {
+        repo.deleteById(id);
+    }
+
+    private UsuarioResponse mapToResponse(Usuario usuario, String token) {
+        // Enriquecer la respuesta con datos del microservicio de Mascotas
+        var mascota = mascotaClient.obtenerMascota(usuario.getId_mascota(), token);
+
+        return UsuarioResponse.builder()
+                .id(usuario.getId())
+                .nombre(usuario.getNombre())
+                .rut(usuario.getRut())
+                .email(usuario.getEmail())
+                .telefono(usuario.getTelefono())
+                .direccion(usuario.getDireccion())
+                .mascota(mascota)
+                .build();
     }
 }

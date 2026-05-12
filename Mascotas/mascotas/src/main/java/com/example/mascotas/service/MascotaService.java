@@ -18,6 +18,9 @@ public class MascotaService {
         return repository.findById(id).get();
     }
 
+    public Mascota save(Mascota mascota){
+        return repository.save(mascota);
+    }
    
 
     

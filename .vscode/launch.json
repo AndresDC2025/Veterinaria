@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "MsAuthApplication",
+            "request": "launch",
+            "mainClass": "com.example.ms_auth.MsAuthApplication",
+            "projectName": "ms-auth"
+        },
+        {
+            "type": "java",
+            "name": "VeterinariaApplication",
+            "request": "launch",
+            "mainClass": "com.example.Veterinaria_.VeterinariaApplication",
+            "projectName": "Veterinaria_"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-MascotasApplication<mascotas>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.mascotas.MascotasApplication",
+            "projectName": "mascotas",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

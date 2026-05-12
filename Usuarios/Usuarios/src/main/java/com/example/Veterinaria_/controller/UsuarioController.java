@@ -2,55 +2,92 @@ package com.example.Veterinaria_.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.Veterinaria_.dto.UsuarioResponseDTO;
+import com.example.Veterinaria_.dto.*;
 import com.example.Veterinaria_.service.UsuarioService;
 
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
-
-
-@Slf4j
 @RestController
-@RequestMapping("/api/v1/usuario")
+@RequestMapping("/api/usuarios")
+@RequiredArgsConstructor
 public class UsuarioController {
-    @Autowired
-    private UsuarioService service;
 
-    // Para crear un nuevo usuario
+    private final UsuarioService service;
+
     @PostMapping
-    public UsuarioResponseDTO save(@RequestBody UsuarioResponseDTO datos) {
-        return service.crearUsuario(datos);
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<ApiResponse<UsuarioResponse>> crear(
+            @Valid @RequestBody UsuariosDTO dto,
+            @RequestHeader("Authorization") String token) {
+
+        return ResponseEntity.status(201).body(
+                ApiResponse.<UsuarioResponse>builder()
+                        .success(true)
+                        .message("Usuario creado")
+                        .data(service.crear(dto, token))
+                        .build()
+        );
     }
 
-    // Para obtener todos los usuarios
     @GetMapping
-    public List<UsuarioResponseDTO> getAll(){
-        return service.getAll();    
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<ApiResponse<List<UsuarioResponse>>> listar(
+            @RequestHeader("Authorization") String token) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<UsuarioResponse>>builder()
+                        .success(true)
+                        .data(service.listar(token))
+                        .build()
+        );
     }
 
-    // Para obtener un usuario por su nombre
-    @GetMapping("/nombre/{nombre}")
-    public List<UsuarioResponseDTO> getByNombre(@PathVariable String nombre) {
-        return service.findByNombre(nombre);
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<ApiResponse<UsuarioResponse>> obtener(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<UsuarioResponse>builder()
+                        .success(true)
+                        .data(service.obtener(id, token))
+                        .build()
+        );
     }
 
-    // Para eliminar un usuario por su RUT
-    @DeleteMapping("/rut/{rut}")
-        public void deleteByRut(@PathVariable String rut){
-        service.deleteByRut(rut);
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<ApiResponse<UsuarioResponse>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody UsuariosDTO dto,
+            @RequestHeader("Authorization") String token) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<UsuarioResponse>builder()
+                        .success(true)
+                        .message("Usuario actualizado")
+                        .data(service.actualizar(id, dto, token))
+                        .build()
+        );
     }
+
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id){
-        service.deleteById(id);
-    }
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
 
+        service.eliminar(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Usuario eliminado")
+                        .build()
+        );
+    }
 }
