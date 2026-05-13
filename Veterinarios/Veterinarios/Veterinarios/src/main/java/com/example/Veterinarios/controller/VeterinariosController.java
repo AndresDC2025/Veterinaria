@@ -27,7 +27,6 @@ public class VeterinariosController {
 
     @GetMapping("/{id}")
     public Veterinarios getById(@PathVariable Long id) {
-        // Este método es el que busca la veterinario 1 y la devuelve
         return service.getById(id); 
     }
 

@@ -2,6 +2,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "VeterinariosApplication",
+            "request": "launch",
+            "mainClass": "com.example.Veterinarios.VeterinariosApplication",
+            "projectName": "veterinarios"
+        },
+        {
+            "type": "java",
+            "name": "VeterinariosApplication",
+            "request": "launch",
+            "mainClass": "com.example.Veterinarios.VeterinariosApplication",
+            "projectName": "Veterinarios"
+        },
+        {
+            "type": "java",
+            "name": "VeterinariaApplication",
+            "request": "launch",
+            "mainClass": "com.example.Veterinaria_.VeterinariaApplication",
+            "projectName": "usuarios"
+        },
+        {
+            "type": "java",
             "name": "MsAuthApplication",
             "request": "launch",
             "mainClass": "com.example.ms_auth.MsAuthApplication",

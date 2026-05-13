@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.mascotas.dto.ApiResponse;
 import com.example.mascotas.model.Mascota;
 import com.example.mascotas.service.MascotaService;
 
@@ -26,10 +27,18 @@ public class MascotaController {
     private MascotaService service; 
 
     @GetMapping("/{id}")
-    public Mascota getById(@PathVariable Long id) {
-        // Este método es el que busca la mascota 1 y la devuelve
-        return service.getById(id); 
-    }
+@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+public ResponseEntity<ApiResponse<Mascota>> getById(@PathVariable Long id) {
+    log.info("Buscando mascota con ID: {}", id);
+    Mascota mascota = service.getById(id);
+    ApiResponse<Mascota> response = ApiResponse.<Mascota>builder()
+            .success(true)
+            .message("Mascota encontrada correctamente")
+            .data(mascota)
+            .build();
+            
+    return ResponseEntity.ok(response);
+}
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")

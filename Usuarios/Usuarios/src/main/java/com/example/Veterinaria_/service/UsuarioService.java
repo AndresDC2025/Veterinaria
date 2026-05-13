@@ -78,18 +78,19 @@ public class UsuarioService {
         repo.deleteById(id);
     }
 
+    // Dentro de UsuarioService.java
     private UsuarioResponse mapToResponse(Usuario usuario, String token) {
-        // Enriquecer la respuesta con datos del microservicio de Mascotas
+        // Se llama al cliente pasando el ID de la mascota y el token de sesión
         var mascota = mascotaClient.obtenerMascota(usuario.getId_mascota(), token);
 
         return UsuarioResponse.builder()
-                .id(usuario.getId())
-                .nombre(usuario.getNombre())
-                .rut(usuario.getRut())
-                .email(usuario.getEmail())
-                .telefono(usuario.getTelefono())
-                .direccion(usuario.getDireccion())
-                .mascota(mascota)
-                .build();
+            .id(usuario.getId())
+            .nombre(usuario.getNombre())
+            .rut(usuario.getRut())
+            .email(usuario.getEmail())
+            .telefono(usuario.getTelefono())
+            .direccion(usuario.getDireccion())
+            .mascota(mascota) // Ahora recibirá el objeto en lugar de null
+            .build();
     }
 }

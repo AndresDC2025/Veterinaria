@@ -21,4 +21,7 @@ public class VeterinariaApplication {
 }
 
 
-//3 microservicios completados al 100% entre 2 mediante live shrare.
+/* 
+	COMPLETAMOS A GRANDES RASGOS TODOS LOS MICROSERVICIOS, PARA LUEGO IR COMPLETANDO LOS DETALLES DE CADA UNO DE ELLOS.
+	BY: MAXI Y PABLO.
+*/

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Data
 @AllArgsConstructor
@@ -18,7 +17,9 @@ public class UsuarioResponse {
     private String email;
     private String telefono;
     private String direccion;
-    private MascotaResponse mascota;    
+    private MascotaResponse mascota;
+    private VeterinariosResponse veterinario;
+
 
 }
 

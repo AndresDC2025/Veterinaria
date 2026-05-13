@@ -1,36 +1,5 @@
 package com.example.Veterinarios.service;
 
-/* import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient; 
-
-import com.example.Veterinarios.model.Veterinarios;
-import com.example.Veterinarios.repository.VeterinariosRepository;
-
-import lombok.extern.slf4j.Slf4j;
-
-
-
-@Slf4j
-@Service
-public class VeterinariosService {
-    
-    @Autowired
-    private VeterinariosRepository repository;
-
-    Esta es la solución que aplicaste en Usuario: el Bean dentro del Service
-    @Bean
-    public WebClient webClient() {
-        return WebClient.builder().build();
-    } 
-
-    public Veterinarios getById(Long id){
-        return repository.findById(id).get();
-    }
-
-} */
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,20 +12,16 @@ import com.example.Veterinarios.repository.VeterinariosRepository;
 public class VeterinariosService {
 
     @Autowired
-    private MascotaRepository repository;
+    private VeterinariosRepository repository;
 
 
-    public Mascota getById(Long id){
+    public Veterinarios getById(Long id){
         return repository.findById(id).get();
     }
 
-    public Mascota save(Mascota mascota){
-        return repository.save(mascota);
+    public Veterinarios save(Veterinarios veterinario){
+        return repository.save(veterinario);
     }
-   
-
-    
-
 
 }
 

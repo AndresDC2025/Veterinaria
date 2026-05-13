@@ -12,21 +12,23 @@ import org.springframework.core.ParameterizedTypeReference;
 public class MascotaClient {
 
     private final WebClient webClient;
-    private final String BASE_URL = "http://localhost:8085/api/mascotas/";
+    // Asegúrate de que el microservicio de Mascotas esté en el 8085
+    private final String BASE_URL = "http://localhost:8085/api/v1/mascotas/";
 
     public MascotaResponse obtenerMascota(Integer id, String token) {
+        if (id == null) return null;
         try {
-            // Petición GET reactiva bloqueante para integrarse con el flujo imperativo del Service
+            // Se debe envolver en ApiResponse tal como en el ejemplo del AutorClient
             ApiResponse<MascotaResponse> response = webClient.get()
                     .uri(BASE_URL + id)
-                    .header("Authorization", token) // Se añade el token para validar la sesión
+                    .header("Authorization", token) // El token debe ser válido
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<ApiResponse<MascotaResponse>>() {})
                     .block();
 
             return (response != null) ? response.getData() : null;
         } catch (Exception e) {
-            // Si el microservicio de mascotas falla o el ID no existe
+            // Si entra aquí, puede ser por puerto cerrado o token inválido
             return null;
         }
     }
