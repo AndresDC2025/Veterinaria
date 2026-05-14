@@ -9,8 +9,5 @@ public class UsuarioResponse {
     private String email;
     private String telefono;
     private String direccion;
-    private Integer monto;
-    private String metodoP;
-    private boolean estado;
-    private Integer idCita;
+
 }

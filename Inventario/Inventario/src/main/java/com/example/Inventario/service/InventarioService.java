@@ -23,7 +23,6 @@ public class InventarioService {
                 .nombre(dto.getNombre())
                 .stock(dto.getStock())
                 .proveedor(dto.getProveedor())
-                .insumoId(dto.getInsumoId())
                 .build();
 
         return repositorio.save(inventario);
@@ -57,7 +56,6 @@ public class InventarioService {
         inventario.setNombre(dto.getNombre());
         inventario.setStock(dto.getStock());
         inventario.setProveedor(dto.getProveedor());
-        inventario.setInsumoId(dto.getInsumoId());
 
         return repositorio.save(inventario);
     }

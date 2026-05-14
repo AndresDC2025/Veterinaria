@@ -25,7 +25,6 @@ public class UsuarioService {
     public UsuarioResponse crear(UsuariosDTO dto, String token) {
         log.info("Creando Usuario", keyValue("nombre", dto.getNombre()));
 
-        // Validar que la mascota exista en el otro microservicio
         var mascota = mascotaClient.obtenerMascota(dto.getId_mascota(), token);
 
         if (mascota == null) {
@@ -58,7 +57,7 @@ public class UsuarioService {
         Usuario usuarioExistente = repo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
-        // Validar nueva mascota si se cambió el ID
+
         var mascota = mascotaClient.obtenerMascota(dto.getId_mascota(), token);
         if (mascota == null) {
             throw new RuntimeException("Mascota no encontrada");
@@ -78,9 +77,8 @@ public class UsuarioService {
         repo.deleteById(id);
     }
 
-    // Dentro de UsuarioService.java
     private UsuarioResponse mapToResponse(Usuario usuario, String token) {
-        // Se llama al cliente pasando el ID de la mascota y el token de sesión
+
         var mascota = mascotaClient.obtenerMascota(usuario.getId_mascota(), token);
 
         return UsuarioResponse.builder()
@@ -90,7 +88,7 @@ public class UsuarioService {
             .email(usuario.getEmail())
             .telefono(usuario.getTelefono())
             .direccion(usuario.getDireccion())
-            .mascota(mascota) // Ahora recibirá el objeto en lugar de null
+            .mascota(mascota) 
             .build();
     }
 }

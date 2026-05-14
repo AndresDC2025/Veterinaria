@@ -26,7 +26,6 @@ public class Historial_MedicoService {
 
         
         Historial_Medico entidad = new Historial_Medico();
-        /* entidad.setFecha(dto.getFecha()); */
         entidad.setDiagnostico(dto.getDiagnostico());
         entidad.setTratamiento(dto.getTratamiento());
         entidad.setDescripcion(dto.getObservaciones()); 
@@ -69,7 +68,6 @@ public class Historial_MedicoService {
         }
 
         
-        /* existente.setFecha(dto.getFecha()); */
         existente.setDiagnostico(dto.getDiagnostico());
         existente.setTratamiento(dto.getTratamiento());
         existente.setDescripcion(dto.getObservaciones());
@@ -89,7 +87,6 @@ public class Historial_MedicoService {
     private Historial_MedicoResponse mapToResponse(Historial_Medico entidad, String nombreMascota) {
         return Historial_MedicoResponse.builder()
                 .id(entidad.getId().intValue())
-                /* .fecha(entidad.getFecha()) */
                 .diagnostico(entidad.getDiagnostico())
                 .tratamiento(entidad.getTratamiento())
                 .descripcion(entidad.getDescripcion())

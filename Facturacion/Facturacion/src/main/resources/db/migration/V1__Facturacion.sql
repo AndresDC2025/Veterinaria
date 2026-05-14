@@ -1,8 +1,8 @@
-Create table facturacion (
-    id integer not null auto_increment,
-    monto varchar(255),
-    metodo varchar(255),
-    estado boolean,
-    idCita integer not null(255),
-    primary key (id)
+CREATE TABLE facturacion (
+    id INTEGER NOT NULL AUTO_INCREMENT,
+    monto VARCHAR(255),
+    metodoP VARCHAR(255),
+    id_cita INTEGER NOT NULL,
+    usuario_id INTEGER NOT NULL,
+    PRIMARY KEY (id)
 );

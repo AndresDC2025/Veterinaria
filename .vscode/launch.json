@@ -2,6 +2,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CitaApplication",
+            "request": "launch",
+            "mainClass": "com.example.Cita.CitaApplication",
+            "projectName": "Cita"
+        },
+        {
+            "type": "java",
+            "name": "FacturacionApplication",
+            "request": "launch",
+            "mainClass": "com.example.Facturacion.FacturacionApplication",
+            "projectName": "Facturacion"
+        },
+        {
+            "type": "java",
+            "name": "HistorialMedicoApplication",
+            "request": "launch",
+            "mainClass": "com.example.Historial_Medico.HistorialMedicoApplication",
+            "projectName": "Historial_medico"
+        },
+        {
+            "type": "java",
             "name": "TratamientosApplication",
             "request": "launch",
             "mainClass": "com.example.Tratamientos.TratamientosApplication",

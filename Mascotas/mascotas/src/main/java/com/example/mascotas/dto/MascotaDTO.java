@@ -16,4 +16,6 @@ public class MascotaDTO {
     @Min(value = 0, message = "La edad debe ser positiva")
     private int edad;
 
+    
+
 }

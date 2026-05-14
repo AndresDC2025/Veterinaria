@@ -1,25 +1,63 @@
 package com.example.mascotas.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-
+import com.example.mascotas.dto.MascotaDTO;
 import com.example.mascotas.model.Mascota;
 import com.example.mascotas.repository.MascotaRepository;
+import jakarta.persistence.EntityNotFoundException;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import static net.logstash.logback.argument.StructuredArguments.keyValue;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class MascotaService {
 
-    @Autowired
-    private MascotaRepository repository;
+    private final MascotaRepository repo;
+
+    public Mascota crear(MascotaDTO dto) {
+        log.info("Crear mascota", keyValue("nombre", dto.getNombre()));
 
 
-    public Mascota getById(Long id){
-        return repository.findById(id).get();
+        Mascota m = new Mascota();
+        m.setNombre(dto.getNombre());
+        m.setRaza(dto.getRaza());
+        m.setEdad(dto.getEdad());
+        
+        return repo.save(m);
     }
 
-    public Mascota save(Mascota mascota){
-        return repository.save(mascota);
+    public List<Mascota> listar() {
+        log.info("Listar mascotas");
+        return repo.findAll();
     }
 
+    public Mascota obtener(Long id) {
+        log.info("Obtener mascota", keyValue("id", id));
+
+        return repo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Mascota no encontrada"));
+    }
+
+    public Mascota actualizar(Long id, MascotaDTO dto) {
+        log.info("Actualizar mascota", keyValue("id", id));
+
+        Mascota m = obtener(id);
+        m.setNombre(dto.getNombre());
+        m.setRaza(dto.getRaza());
+        m.setEdad(dto.getEdad());
+
+        return repo.save(m);
+    }
+
+    public void eliminar(Long id) {
+        log.warn("Eliminar mascota", keyValue("id", id));
+        repo.deleteById(id);
+    }
 }

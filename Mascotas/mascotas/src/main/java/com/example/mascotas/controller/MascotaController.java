@@ -1,55 +1,69 @@
 package com.example.mascotas.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.mascotas.dto.ApiResponse;
+import com.example.mascotas.dto.MascotaDTO;
 import com.example.mascotas.model.Mascota;
 import com.example.mascotas.service.MascotaService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/mascotas")
+@RequiredArgsConstructor // Es mejor usar esto que @Autowired
 public class MascotaController {
 
-    @Autowired
-    private MascotaService service; 
+    private final MascotaService service; 
 
     @GetMapping("/{id}")
-@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-public ResponseEntity<ApiResponse<Mascota>> getById(@PathVariable Long id) {
-    log.info("Buscando mascota con ID: {}", id);
-    Mascota mascota = service.getById(id);
-    ApiResponse<Mascota> response = ApiResponse.<Mascota>builder()
-            .success(true)
-            .message("Mascota encontrada correctamente")
-            .data(mascota)
-            .build();
-            
-    return ResponseEntity.ok(response);
-}
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<ApiResponse<Mascota>> obtener(@PathVariable Long id) {
+        log.info("Buscando mascota con ID: {}", id);
+        
+        return ResponseEntity.ok(
+            ApiResponse.<Mascota>builder()
+                .success(true)
+                .message("Mascota encontrada correctamente")
+                .data(service.obtener(id))
+                .build()
+        );
+    }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Mascota> crear(
-            @Valid @RequestBody Mascota mascota,
-            @RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponse<Mascota>> crear(
+            @Valid @RequestBody MascotaDTO dto) { // CAMBIO: Usar MascotaDTO
 
-        log.info("Creando mascota: {}", mascota.getNombre());
+        log.info("Creando mascota: {}", dto.getNombre());
 
-        Mascota nuevaMascota = service.save(mascota);
+        // El servicio de mascota no recibe token, así que llamamos normal
+        Mascota nuevaMascota = service.crear(dto);
 
-        return ResponseEntity.status(201).body(nuevaMascota);
+        return ResponseEntity.status(201).body(
+            ApiResponse.<Mascota>builder()
+                .success(true)
+                .message("Mascota creada correctamente")
+                .data(nuevaMascota)
+                .build()
+        );
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<ApiResponse<List<Mascota>>> listar() {
+        return ResponseEntity.ok(
+            ApiResponse.<List<Mascota>>builder()
+                .success(true)
+                .message("Listado obtenido")
+                .data(service.listar())
+                .build()
+        );
     }
 }

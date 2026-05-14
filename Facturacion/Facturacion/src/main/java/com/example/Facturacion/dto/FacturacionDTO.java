@@ -12,14 +12,5 @@ public class FacturacionDTO {
     @NotBlank(message = "El metodo de pago es obligatorio")
     private String metodoP;
 
-    public Integer getUsuarioId() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUsuarioId'");
-    }
-
-	public Object getDetalle() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'getDetalle'");
-	}
 
 }
