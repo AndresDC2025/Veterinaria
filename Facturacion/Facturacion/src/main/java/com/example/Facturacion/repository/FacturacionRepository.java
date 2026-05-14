@@ -1,21 +1,15 @@
 package com.example.Facturacion.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.example.Facturacion.model.Facturacion;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import jakarta.transaction.Transactional;
-
-public interface FacturacionRepository extends JpaRepository<Facturacion, Long>{
-
-
-    @Transactional
-    void deleteById(Long id);
-
-    Facturacion findById(long id);
-
-    List<Facturacion> findByNombre(String nombre);
-
+/**
+ * Repositorio para la entidad Facturacion.
+ * Proporciona los métodos necesarios para la persistencia de datos en la tabla ms-facturacion.
+ */
+@Repository
+public interface FacturacionRepository extends JpaRepository<Facturacion, Integer> {
+    // JpaRepository ya incluye los métodos findAll(), findById(), save() y deleteById()
+    // que utiliza tu FacturacionService.
 }

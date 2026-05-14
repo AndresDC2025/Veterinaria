@@ -26,5 +26,13 @@ public class Facturacion {
     private String metodoP;
     private boolean estado;
     private Integer idCita;
+    public void setUsuarioId(Integer usuarioId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setUsuarioId'");
+    }
+    public void setDetalle(Object detalle) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setDetalle'");
+    }
 
 }
