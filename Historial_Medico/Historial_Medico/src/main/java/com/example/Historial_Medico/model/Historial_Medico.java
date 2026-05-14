@@ -10,12 +10,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Slf4j
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Data
-//@Date
 @Table(name="historial_medico")
 public class Historial_Medico {
 
@@ -24,9 +26,7 @@ public class Historial_Medico {
     private Integer id;
     private String diagnostico;
     private String tratamiento;
-    private String notas;
+    private String descripcion;
     private Integer idMascota;
-    //private Date fecha; 
-
-
+    private LocalDateTime fecha;
 }

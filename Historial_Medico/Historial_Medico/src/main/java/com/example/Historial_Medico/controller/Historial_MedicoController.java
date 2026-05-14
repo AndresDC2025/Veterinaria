@@ -1,56 +1,93 @@
 package com.example.Historial_Medico.controller;
 
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.Historial_Medico.dto.ApiResponse;
-import com.example.Historial_Medico.model.Historial_Medico;
+import com.example.Historial_Medico.dto.*;
 import com.example.Historial_Medico.service.Historial_MedicoService;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
-@Slf4j
 @RestController
-@RequestMapping("/api/v1/Historial_Medico")
+@RequestMapping("/api/historiales-medicos")
+@RequiredArgsConstructor
 public class Historial_MedicoController {
 
-    @Autowired
-    private Historial_MedicoService service; 
+    private final Historial_MedicoService service;
 
-    @GetMapping("/{id}")
-@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-public ResponseEntity<ApiResponse<Historial_Medico>> getById(@PathVariable Long id) {
-    log.info("Buscando Historial_Medico con ID: {}", id);
-    Historial_Medico Historial_Medico = service.getById(id);
-    ApiResponse<Historial_Medico> response = ApiResponse.<Historial_Medico>builder()
-            .success(true)
-            .message("Historial_Medico encontrada correctamente")
-            .data(Historial_Medico)
-            .build();
-            
-    return ResponseEntity.ok(response);
-}
-
-    /* @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Historial_Medico> crear(
-            @Valid @RequestBody Historial_Medico Historial_Medico,
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Historial_MedicoResponse>> crear(
+            @Valid @RequestBody Historial_MedicoDTO dto,
             @RequestHeader("Authorization") String token) {
 
-        log.info("Creando Historial_Medico: {}", Historial_Medico.ById());
+        return ResponseEntity.status(201).body(
+                ApiResponse.<Historial_MedicoResponse>builder()
+                        .success(true)
+                        .message("Historial médico creado")
+                        .data(service.crear(dto, token))
+                        .build()
+        );
+    }
 
-        Historial_Medico nuevaHistorial_Medico = service.save(Historial_Medico);
+    @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<List<Historial_MedicoResponse>>> listar(
+            @RequestHeader("Authorization") String token) {
 
-        return ResponseEntity.status(201).body(nuevaHistorial_Medico);
-    } */
+        return ResponseEntity.ok(
+                ApiResponse.<List<Historial_MedicoResponse>>builder()
+                        .success(true)
+                        .data(service.listar(token))
+                        .build()
+        );
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Historial_MedicoResponse>> obtener(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<Historial_MedicoResponse>builder()
+                        .success(true)
+                        .data(service.obtener(id, token))
+                        .build()
+        );
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Historial_MedicoResponse>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Historial_MedicoDTO dto,
+            @RequestHeader("Authorization") String token) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<Historial_MedicoResponse>builder()
+                        .success(true)
+                        .message("Historial médico actualizado")
+                        .data(service.actualizar(id, dto, token))
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Historial médico eliminado")
+                        .build()
+        );
+    }
 }

@@ -1,9 +1,6 @@
 package com.example.Historial_Medico.dto;
 
 import java.time.LocalDate;
-
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,18 +10,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Historial_MedicoDTO {
+public class Historial_MedicoResponse {
 
-    @NotNull(message = "La fecha es obligatoria")
+    private Long id;
     private LocalDate fecha;
-
-    @NotBlank(message = "El diagnóstico es obligatorio")
     private String diagnostico;
-
     private String tratamiento;
-
     private String observaciones;
-
-    @NotNull(message = "El ID de mascota es obligatorio")
-    private Long idMascota;
+    
+    // Si quieres incluir información básica del paciente/mascota
+    private Long mascotaId;
+    private String nombreMascota;
+    
+    // Si quieres incluir quién fue el veterinario que lo atendió
+    private String nombreVeterinario;
 }
