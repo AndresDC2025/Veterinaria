@@ -34,7 +34,7 @@ public class UsuarioService {
 
         Usuario usuario = repo.save(
                 new Usuario(null, dto.getNombre(), dto.getRut(), dto.getEmail(), 
-                            dto.getTelefono(), dto.getDireccion(), dto.getId_mascota())
+                 dto.getTelefono(), dto.getDireccion(), dto.getId_mascota())
         );
 
         return mapToResponse(usuario, token);

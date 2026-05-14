@@ -28,5 +28,6 @@ public class Insumos {
     private Integer stock;
     /* private Date fecha; */
     private String proveedor;
+    /* FALTA LA CONEXION CON LAS DEMAS TABLAS */
 
 }

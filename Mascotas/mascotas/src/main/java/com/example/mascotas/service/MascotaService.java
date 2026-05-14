@@ -21,9 +21,5 @@ public class MascotaService {
     public Mascota save(Mascota mascota){
         return repository.save(mascota);
     }
-   
-
-    
-
 
 }

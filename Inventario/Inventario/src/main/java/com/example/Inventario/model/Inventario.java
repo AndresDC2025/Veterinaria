@@ -26,6 +26,7 @@ public class Inventario {
     private Integer stock;
     private String proveedor;
     /* private Date fecha; */
+    private Integer insumoId;
 
 
 }

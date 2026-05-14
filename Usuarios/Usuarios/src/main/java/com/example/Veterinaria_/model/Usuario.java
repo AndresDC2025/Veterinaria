@@ -30,7 +30,6 @@ public class Usuario {
     private String email;
     private String telefono;
     private String direccion;
-    private Integer id_mascota; 
-
+    private Integer id_mascota;
 
 }

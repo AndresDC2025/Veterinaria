@@ -36,5 +36,6 @@ public class UsuariosDTO {
  */
     @NotNull(message = "El id_mascota es obligatorio")
     private Integer id_mascota;
+
 }
 

@@ -15,8 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @Entity
 @Data
-@Table
-/* @Date */
+//@Date
+@Table(name="historial_medico")
 public class Historial_Medico {
 
     @Id
@@ -26,7 +26,7 @@ public class Historial_Medico {
     private String tratamiento;
     private String notas;
     private Integer idMascota;
-    /* private Date fecha; */
+    //private Date fecha; 
 
 
 }

@@ -17,14 +17,15 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @Entity
 @Data
-@Table(name = "mascotas")
+@Table(name = "tratamiento")
 public class Tratamientos {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nombre;
-    private String raza;
-    private int edad;
+    private String dosis;
+    private String duracion;
+    private Integer idHistorial;
 
 }

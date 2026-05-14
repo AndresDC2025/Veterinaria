@@ -1,4 +1,4 @@
-CREATE TABLE usuarios (
+CREATE TABLE usuario (
     id integer NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(50),
     rut VARCHAR(12),

@@ -1,4 +1,4 @@
-Create table veterinarios (
+Create table veterinario (
     id integer not null auto_increment,
     nombre varchar(255),
     especialidad varchar(255),
