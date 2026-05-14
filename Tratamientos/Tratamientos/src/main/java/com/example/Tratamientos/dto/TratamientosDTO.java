@@ -1,6 +1,5 @@
 package com.example.Tratamientos.dto;
 
-
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -10,11 +9,12 @@ public class TratamientosDTO {
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    @NotBlank(message = "La raza es obligatoria")
-    private String raza;
+    @NotBlank(message = "La dosis es obligatoria")
+    private String dosis;
 
-    @NotNull(message = "La edad es obligatoria")
-    @Min(value = 0, message = "La edad debe ser positiva")
-    private int edad;
+    @NotBlank(message = "La duración es obligatoria")
+    private String duracion;
 
+    @NotNull(message = "El historial es obligatorio")
+    private Integer idHistorial;
 }

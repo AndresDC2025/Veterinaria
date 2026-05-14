@@ -1,45 +1,104 @@
 package com.example.Veterinarios.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.example.Veterinarios.dto.ApiResponse;
+import com.example.Veterinarios.dto.VeterinarioDTO;
 import com.example.Veterinarios.model.Veterinarios;
 import com.example.Veterinarios.service.VeterinariosService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/veterinarios")
 public class VeterinariosController {
 
-    @Autowired
-    private VeterinariosService service; 
+    private final VeterinariosService servicio;
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<List<Veterinarios>>> listar() {
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<Veterinarios>>builder()
+                        .success(true)
+                        .message("Lista de veterinarios")
+                        .data(servicio.listar())
+                        .build()
+        );
+    }
 
     @GetMapping("/{id}")
-    public Veterinarios getById(@PathVariable Long id) {
-        return service.getById(id); 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Veterinarios>> obtener(
+            @PathVariable Long id
+    ) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<Veterinarios>builder()
+                        .success(true)
+                        .message("Veterinario encontrado")
+                        .data(servicio.obtener(id))
+                        .build()
+        );
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Veterinarios> crear(
-            @Valid @RequestBody Veterinarios veterinario,
-            @RequestHeader("Authorization") String token) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Veterinarios>> guardar(
+            @Valid @RequestBody VeterinarioDTO dto
+    ) {
 
-        log.info("Creando veterinario: {}", veterinario.getNombre());
+        Veterinarios veterinario = servicio.guardar(dto);
 
-        Veterinarios nuevaveterinario = service.save(veterinario);
+        return ResponseEntity.status(201)
+                .body(
+                        ApiResponse.<Veterinarios>builder()
+                                .success(true)
+                                .message("Veterinario creado")
+                                .data(veterinario)
+                                .build()
+                );
+    }
 
-        return ResponseEntity.status(201).body(nuevaveterinario);
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Veterinarios>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody VeterinarioDTO dto
+    ) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<Veterinarios>builder()
+                        .success(true)
+                        .message("Veterinario actualizado")
+                        .data(servicio.actualizar(id, dto))
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> eliminar(
+            @PathVariable Long id
+    ) {
+
+        servicio.eliminar(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .success(true)
+                        .message("Veterinario eliminado")
+                        .data("OK")
+                        .build()
+        );
     }
 }

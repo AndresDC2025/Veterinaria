@@ -1,95 +1,99 @@
 package com.example.Historial_Medico.service;
 
-import java.util.List;
-import java.util.Optional;
-import org.springframework.stereotype.Service;
-import com.example.Historial_Medico.client.MascotaClient;
-import com.example.Historial_Medico.dto.Historial_MedicoDTO;
+import com.example.Historial_Medico.dto.*;
 import com.example.Historial_Medico.model.Historial_Medico;
 import com.example.Historial_Medico.repository.Historial_MedicoRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
+import com.example.Historial_Medico.client.MascotaClient;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import static net.logstash.logback.argument.StructuredArguments.keyValue;
+import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class Historial_MedicoService {
 
     private final Historial_MedicoRepository repo;
     private final MascotaClient mascotaClient;
 
-    public Historial_Medico crear(Historial_Medico dto, String token) {
-        log.info("Iniciando creación de Historial Médico", 
-            keyValue("mascotaId", dto.getIdMascota()));
-
-        // Validación externa: Consultar al microservicio de Mascotas (Puerto 8085)
+    public Historial_MedicoResponse crear(Historial_MedicoDTO dto, String token) {
+        
         var mascota = mascotaClient.obtenerMascota(dto.getIdMascota(), token);
-
         if (mascota == null) {
-            log.error("Fallo al crear historial: Mascota inexistente", 
-                keyValue("mascotaId", dto.getIdMascota()));
-            throw new RuntimeException("La mascota con ID " + dto.getIdMascota() + " no existe en el sistema.");
+            throw new RuntimeException("No se puede crear el historial: Mascota no encontrada.");
         }
 
-        log.info("Mascota validada exitosamente", keyValue("nombreMascota", mascota.getNombre()));
-        return repo.save(dto);
+        
+        Historial_Medico entidad = new Historial_Medico();
+        /* entidad.setFecha(dto.getFecha()); */
+        entidad.setDiagnostico(dto.getDiagnostico());
+        entidad.setTratamiento(dto.getTratamiento());
+        entidad.setDescripcion(dto.getObservaciones()); 
+        entidad.setIdMascota(dto.getIdMascota().intValue());
+
+        
+        Historial_Medico guardado = repo.save(entidad);
+        return mapToResponse(guardado, mascota.getNombre());
     }
 
-    public List<Historial_Medico> listar() {
-        log.info("Listando todos los historiales médicos registrados");
-        return repo.findAll();
+    public List<Historial_MedicoResponse> listar(String token) {
+        return repo.findAll().stream()
+                .map(entidad -> {
+                    
+                    var mascota = mascotaClient.obtenerMascota(entidad.getIdMascota().longValue(), token);
+                    String nombre = (mascota != null) ? mascota.getNombre() : "Desconocida";
+                    return mapToResponse(entidad, nombre);
+                })
+                .collect(Collectors.toList());
     }
 
-    public Historial_Medico obtener(Integer id) {
-        Optional<Historial_Medico> optionalHistorial = repo.findById(id);
-        
-        if (optionalHistorial.isEmpty()) {
-            log.error("Búsqueda fallida: Historial no encontrado", keyValue("id", id));
-            throw new EntityNotFoundException("Historial médico con ID " + id + " no encontrado.");
-        }
-        
-        return optionalHistorial.get();
+    public Historial_MedicoResponse obtener(Long id, String token) {
+        Historial_Medico entidad = repo.findById(id.intValue())
+                .orElseThrow(() -> new EntityNotFoundException("Historial médico no encontrado con ID: " + id));
+
+        var mascota = mascotaClient.obtenerMascota(entidad.getIdMascota().longValue(), token);
+        String nombre = (mascota != null) ? mascota.getNombre() : "Desconocida";
+
+        return mapToResponse(entidad, nombre);
     }
 
-    public Historial_Medico actualizar(Integer id, Historial_Medico entidad, String token) {
-        Optional<Historial_Medico> optionalHistorial = repo.findById(id);
-        
-        if (optionalHistorial.isEmpty()) {
-            log.error("Actualización fallida: Registro inexistente", keyValue("id", id));
-            throw new EntityNotFoundException("No se puede actualizar: Historial no encontrado.");
-        }
+    public Historial_MedicoResponse actualizar(Long id, Historial_MedicoDTO dto, String token) {
+        Historial_Medico existente = repo.findById(id.intValue())
+                .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar: Historial inexistente"));
 
-        // Validar si el nuevo ID de mascota es válido antes de actualizar
-        var mascota = mascotaClient.obtenerMascota(entidad.getIdMascota(), token);
+        
+        var mascota = mascotaClient.obtenerMascota(dto.getIdMascota(), token);
         if (mascota == null) {
-            log.error("Actualización fallida: Nueva mascota no encontrada", 
-                keyValue("mascotaId", entidad.getIdMascota()));
-            throw new RuntimeException("Mascota no encontrada para el historial.");
+            throw new RuntimeException("Mascota no encontrada para actualizar el historial");
         }
 
-        Historial_Medico existente = optionalHistorial.get();
-        existente.setFecha(entidad.getFecha());
-        existente.setDescripcion(entidad.getDescripcion());
-        existente.setDiagnostico(entidad.getDiagnostico());
-        existente.setTratamiento(entidad.getTratamiento());
-        existente.setIdMascota(entidad.getIdMascota());
+        
+        /* existente.setFecha(dto.getFecha()); */
+        existente.setDiagnostico(dto.getDiagnostico());
+        existente.setTratamiento(dto.getTratamiento());
+        existente.setDescripcion(dto.getObservaciones());
+        existente.setIdMascota(dto.getIdMascota().intValue());
 
-        log.info("Historial médico actualizado correctamente", keyValue("id", id));
-        return repo.save(existente);
+        Historial_Medico actualizado = repo.save(existente);
+        return mapToResponse(actualizado, mascota.getNombre());
     }
 
-    public void eliminar(Integer id) {
-        log.info("Intentando eliminar historial médico", keyValue("id", id));
-        
-        if (!repo.existsById(id)) {
-            log.error("Eliminación fallida: ID no encontrado", keyValue("id", id));
-            throw new EntityNotFoundException("No se encontró el registro para eliminar.");
+    public void eliminar(Long id) {
+        if (!repo.existsById(id.intValue())) {
+            throw new EntityNotFoundException("No se encontró el registro para eliminar");
         }
-        
-        repo.deleteById(id);
-        log.info("Historial médico eliminado", keyValue("id", id));
+        repo.deleteById(id.intValue());
+    }
+
+    private Historial_MedicoResponse mapToResponse(Historial_Medico entidad, String nombreMascota) {
+        return Historial_MedicoResponse.builder()
+                .id(entidad.getId().intValue())
+                /* .fecha(entidad.getFecha()) */
+                .diagnostico(entidad.getDiagnostico())
+                .tratamiento(entidad.getTratamiento())
+                .descripcion(entidad.getDescripcion())
+                .mascotaId(entidad.getIdMascota().intValue())
+                .build();
     }
 }

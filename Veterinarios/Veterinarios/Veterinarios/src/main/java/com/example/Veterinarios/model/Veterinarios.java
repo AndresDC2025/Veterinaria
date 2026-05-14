@@ -1,22 +1,13 @@
 package com.example.Veterinarios.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.persistence.*;
+import lombok.*;
 
-
-
-@Slf4j
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "veterinarios")
 public class Veterinarios {
 
@@ -25,8 +16,10 @@ public class Veterinarios {
     private Long id;
 
     private String nombre;
-    private String especialidad;
-    private String horario;
-    private String email;
 
+    private String especialidad;
+
+    private String horario;
+
+    private String email;
 }

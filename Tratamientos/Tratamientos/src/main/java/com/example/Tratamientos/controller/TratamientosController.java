@@ -1,55 +1,106 @@
 package com.example.Tratamientos.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.Tratamientos.dto.ApiResponse;
+import com.example.Tratamientos.dto.TratamientosDTO;
 import com.example.Tratamientos.model.Tratamientos;
 import com.example.Tratamientos.service.TratamientosService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/Tratamientos")
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/tratamientos")
 public class TratamientosController {
 
-    @Autowired
-    private TratamientosService service; 
+    private final TratamientosService service;
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<List<Tratamientos>>> listar() {
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<Tratamientos>>builder()
+                        .success(true)
+                        .message("Lista de tratamientos")
+                        .data(service.listar())
+                        .build()
+        );
+    }
 
     @GetMapping("/{id}")
-@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-public ResponseEntity<ApiResponse<Tratamientos>> getById(@PathVariable Long id) {
-    log.info("Buscando Tratamientos con ID: {}", id);
-    Tratamientos Tratamientos = service.getById(id);
-    ApiResponse<Tratamientos> response = ApiResponse.<Tratamientos>builder()
-            .success(true)
-            .message("Tratamientos encontrada correctamente")
-            .data(Tratamientos)
-            .build();
-            
-    return ResponseEntity.ok(response);
-}
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Tratamientos>> getById(
+            @PathVariable Long id
+    ) {
+
+        Tratamientos tratamiento = service.getById(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Tratamientos>builder()
+                        .success(true)
+                        .message("Tratamiento encontrado")
+                        .data(tratamiento)
+                        .build()
+        );
+    }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Tratamientos> crear(
-            @Valid @RequestBody Tratamientos Tratamientos,
-            @RequestHeader("Authorization") String token) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Tratamientos>> crear(
+            @Valid @RequestBody TratamientosDTO dto
+    ) {
 
-        log.info("Creando Tratamientos: {}", Tratamientos.getNombre());
+        Tratamientos tratamiento = service.save(dto);
 
-        Tratamientos nuevaTratamientos = service.save(Tratamientos);
+        return ResponseEntity.status(201)
+                .body(
+                        ApiResponse.<Tratamientos>builder()
+                                .success(true)
+                                .message("Tratamiento creado")
+                                .data(tratamiento)
+                                .build()
+                );
+    }
 
-        return ResponseEntity.status(201).body(nuevaTratamientos);
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Tratamientos>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody TratamientosDTO dto
+    ) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<Tratamientos>builder()
+                        .success(true)
+                        .message("Tratamiento actualizado")
+                        .data(service.actualizar(id, dto))
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> eliminar(
+            @PathVariable Long id
+    ) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .success(true)
+                        .message("Tratamiento eliminado")
+                        .data("OK")
+                        .build()
+        );
     }
 }

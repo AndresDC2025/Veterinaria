@@ -1,19 +1,17 @@
 package com.example.Historial_Medico.controller;
 
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import com.example.Historial_Medico.dto.*;
+import com.example.Historial_Medico.model.Historial_Medico;
 import com.example.Historial_Medico.service.Historial_MedicoService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/historiales-medicos")
+@RequestMapping("/api/v1/historiales")
 @RequiredArgsConstructor
 public class Historial_MedicoController {
 
@@ -35,7 +33,7 @@ public class Historial_MedicoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN', 'VETERINARIO')")
     public ResponseEntity<ApiResponse<List<Historial_MedicoResponse>>> listar(
             @RequestHeader("Authorization") String token) {
 
@@ -48,7 +46,7 @@ public class Historial_MedicoController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN', 'VETERINARIO')")
     public ResponseEntity<ApiResponse<Historial_MedicoResponse>> obtener(
             @PathVariable Long id,
             @RequestHeader("Authorization") String token) {

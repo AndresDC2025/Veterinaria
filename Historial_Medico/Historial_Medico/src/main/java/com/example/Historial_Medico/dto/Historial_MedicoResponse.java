@@ -12,16 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Historial_MedicoResponse {
 
-    private Long id;
+    private Integer id;
     private LocalDate fecha;
     private String diagnostico;
     private String tratamiento;
-    private String observaciones;
-    
-    // Si quieres incluir información básica del paciente/mascota
-    private Long mascotaId;
-    private String nombreMascota;
-    
-    // Si quieres incluir quién fue el veterinario que lo atendió
-    private String nombreVeterinario;
+    private String descripcion;
+    private Integer mascotaId;
+
 }

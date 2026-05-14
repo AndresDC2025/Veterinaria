@@ -1,56 +1,106 @@
 package com.example.Insumos.controller;
 
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.Insumos.dto.ApiResponse;
+import com.example.Insumos.dto.InsumosDTO;
 import com.example.Insumos.model.Insumos;
 import com.example.Insumos.service.InsumosService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/")
+@RequiredArgsConstructor
+@RequestMapping("/api/insumos")
 public class InsumosController {
 
-    @Autowired
-    private InsumosService service; 
+    private final InsumosService service;
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<List<Insumos>>> listar() {
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<Insumos>>builder()
+                        .success(true)
+                        .message("Lista de insumos")
+                        .data(service.listar())
+                        .build()
+        );
+    }
 
     @GetMapping("/{id}")
-@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-public ResponseEntity<ApiResponse<Insumos>> getById(@PathVariable Long id) {
-    log.info("Buscando Insumos con ID: {}", id);
-    Insumos Insumos = service.getById(id);
-    ApiResponse<Insumos> response = ApiResponse.<Insumos>builder()
-            .success(true)
-            .message("Insumos encontrada correctamente")
-            .data(Insumos)
-            .build();
-            
-    return ResponseEntity.ok(response);
-}
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Insumos>> getById(
+            @PathVariable Long id
+    ) {
+
+        Insumos insumo = service.getById(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Insumos>builder()
+                        .success(true)
+                        .message("Insumo encontrado")
+                        .data(insumo)
+                        .build()
+        );
+    }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Insumos> crear(
-            @Valid @RequestBody Insumos Insumos,
-            @RequestHeader("Authorization") String token) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Insumos>> crear(
+            @Valid @RequestBody InsumosDTO dto
+    ) {
 
-        log.info("Creando Insumos: {}", Insumos.getNombre());
+        Insumos nuevoInsumo = service.save(dto);
 
-        Insumos nuevaInsumos = service.save(Insumos);
+        return ResponseEntity.status(201)
+                .body(
+                        ApiResponse.<Insumos>builder()
+                                .success(true)
+                                .message("Insumo creado")
+                                .data(nuevoInsumo)
+                                .build()
+                );
+    }
 
-        return ResponseEntity.status(201).body(nuevaInsumos);
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<Insumos>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody InsumosDTO dto
+    ) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<Insumos>builder()
+                        .success(true)
+                        .message("Insumo actualizado")
+                        .data(service.actualizar(id, dto))
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> eliminar(
+            @PathVariable Long id
+    ) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .success(true)
+                        .message("Insumo eliminado")
+                        .data("OK")
+                        .build()
+        );
     }
 }

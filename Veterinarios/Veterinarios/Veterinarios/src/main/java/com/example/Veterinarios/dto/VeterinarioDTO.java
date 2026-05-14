@@ -9,11 +9,12 @@ public class VeterinarioDTO {
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    @NotBlank(message = "La raza es obligatoria")
-    private String raza;
+    @NotBlank(message = "La especialidad es obligatoria")
+    private String especialidad;
 
-    @NotNull(message = "La edad es obligatoria")
-    @Min(value = 0, message = "La edad debe ser positiva")
-    private int edad;
+    @NotBlank(message = "El horario es obligatorio")
+    private String horario;
 
+    @NotBlank(message = "El email es obligatorio")
+    private String email;
 }
