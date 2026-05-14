@@ -2,6 +2,48 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TratamientosApplication",
+            "request": "launch",
+            "mainClass": "com.example.Tratamientos.TratamientosApplication",
+            "projectName": "Tratamientos"
+        },
+        {
+            "type": "java",
+            "name": "ResenaApplication",
+            "request": "launch",
+            "mainClass": "com.example.Resena.ResenaApplication",
+            "projectName": "Resena"
+        },
+        {
+            "type": "java",
+            "name": "InventarioApplication",
+            "request": "launch",
+            "mainClass": "com.example.Inventario.InventarioApplication",
+            "projectName": "Inventario"
+        },
+        {
+            "type": "java",
+            "name": "InsumosApplication",
+            "request": "launch",
+            "mainClass": "com.example.Insumos.InsumosApplication",
+            "projectName": "Insumos"
+        },
+        {
+            "type": "java",
+            "name": "HistorialMedicoApplication",
+            "request": "launch",
+            "mainClass": "com.example.Historial_Medico.HistorialMedicoApplication",
+            "projectName": "Historial_Medico"
+        },
+        {
+            "type": "java",
+            "name": "FacturacionApplication",
+            "request": "launch",
+            "mainClass": "com.example.Facturacion.FacturacionApplication",
+            "projectName": "facturacion"
+        },
+        {
+            "type": "java",
             "name": "VeterinariosApplication",
             "request": "launch",
             "mainClass": "com.example.Veterinarios.VeterinariosApplication",
