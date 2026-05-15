@@ -10,4 +10,8 @@ public interface ResenaRepository
         extends JpaRepository<Resena, Long> {
 
     List<Resena> findByEstrellas(Integer estrellas);
+
+
+    List<Resena> findByVeterinarioId(Long veterinarioId);
+
 }

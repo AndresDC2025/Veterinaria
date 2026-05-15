@@ -20,17 +20,12 @@ public class ResenaService {
     private final ResenaRepository repository;
 
     public List<Resena> listar() {
-
         return repository.findAll();
     }
 
     public Resena getById(Long id) {
-
         return repository.findById(id)
-                .orElseThrow(() ->
-                        new EntityNotFoundException(
-                                "Reseña no encontrada"
-                        ));
+                .orElseThrow(() -> new EntityNotFoundException("Reseña no encontrada"));
     }
 
     public Resena save(ResenaDTO dto) {
@@ -40,20 +35,19 @@ public class ResenaService {
         Resena resena = Resena.builder()
                 .opinion(dto.getOpinion())
                 .estrellas(dto.getEstrellas())
+                .veterinarioId(dto.getVeterinarioId())
                 .build();
 
         return repository.save(resena);
     }
 
-    public Resena actualizar(
-            Long id,
-            ResenaDTO dto
-    ) {
+    public Resena actualizar(Long id, ResenaDTO dto) {
 
         Resena resena = getById(id);
 
         resena.setOpinion(dto.getOpinion());
         resena.setEstrellas(dto.getEstrellas());
+        resena.setVeterinarioId(dto.getVeterinarioId());
 
         return repository.save(resena);
     }
@@ -61,12 +55,13 @@ public class ResenaService {
     public void eliminar(Long id) {
 
         if (!repository.existsById(id)) {
-
-            throw new EntityNotFoundException(
-                    "Reseña no encontrada"
-            );
+            throw new EntityNotFoundException("Reseña no encontrada");
         }
 
         repository.deleteById(id);
+    }
+
+    public List<Resena> listarPorVeterinario(Long veterinarioId) {
+        return repository.findByVeterinarioId(veterinarioId);
     }
 }

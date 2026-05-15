@@ -18,4 +18,6 @@ public class Resena {
     private String opinion;
 
     private Integer estrellas;
+
+    private Long veterinarioId; 
 }

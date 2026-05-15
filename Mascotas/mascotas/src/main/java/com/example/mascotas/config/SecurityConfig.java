@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,4 +77,9 @@ public class SecurityConfig {
             new ObjectMapper().writeValue(response.getOutputStream(), res);
         };
     }
+
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+}
 }

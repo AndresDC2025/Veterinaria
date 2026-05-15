@@ -21,5 +21,5 @@ public class Tratamientos {
 
     private String duracion;
 
-    private Integer idHistorial;
+    private Long mascotaId;
 }

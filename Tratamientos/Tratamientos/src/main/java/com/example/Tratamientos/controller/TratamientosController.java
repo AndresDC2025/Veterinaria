@@ -13,9 +13,7 @@ import com.example.Tratamientos.service.TratamientosService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/tratamientos")
@@ -38,17 +36,13 @@ public class TratamientosController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
-    public ResponseEntity<ApiResponse<Tratamientos>> getById(
-            @PathVariable Long id
-    ) {
-
-        Tratamientos tratamiento = service.getById(id);
+    public ResponseEntity<ApiResponse<Tratamientos>> getById(@PathVariable Long id) {
 
         return ResponseEntity.ok(
                 ApiResponse.<Tratamientos>builder()
                         .success(true)
                         .message("Tratamiento encontrado")
-                        .data(tratamiento)
+                        .data(service.getById(id))
                         .build()
         );
     }
@@ -56,27 +50,22 @@ public class TratamientosController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
     public ResponseEntity<ApiResponse<Tratamientos>> crear(
-            @Valid @RequestBody TratamientosDTO dto
-    ) {
+            @Valid @RequestBody TratamientosDTO dto) {
 
-        Tratamientos tratamiento = service.save(dto);
-
-        return ResponseEntity.status(201)
-                .body(
-                        ApiResponse.<Tratamientos>builder()
-                                .success(true)
-                                .message("Tratamiento creado")
-                                .data(tratamiento)
-                                .build()
-                );
+        return ResponseEntity.status(201).body(
+                ApiResponse.<Tratamientos>builder()
+                        .success(true)
+                        .message("Tratamiento creado")
+                        .data(service.save(dto))
+                        .build()
+        );
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
     public ResponseEntity<ApiResponse<Tratamientos>> actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody TratamientosDTO dto
-    ) {
+            @Valid @RequestBody TratamientosDTO dto) {
 
         return ResponseEntity.ok(
                 ApiResponse.<Tratamientos>builder()
@@ -89,9 +78,7 @@ public class TratamientosController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<String>> eliminar(
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<ApiResponse<String>> eliminar(@PathVariable Long id) {
 
         service.eliminar(id);
 
@@ -100,6 +87,20 @@ public class TratamientosController {
                         .success(true)
                         .message("Tratamiento eliminado")
                         .data("OK")
+                        .build()
+        );
+    }
+
+    @GetMapping("/mascota/{mascotaId}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<List<Tratamientos>>> listarPorMascota(
+            @PathVariable Long mascotaId) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<Tratamientos>>builder()
+                        .success(true)
+                        .message("Tratamientos por mascota")
+                        .data(service.listarPorMascota(mascotaId))
                         .build()
         );
     }

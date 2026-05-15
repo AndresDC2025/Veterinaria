@@ -38,17 +38,13 @@ public class ResenaController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
-    public ResponseEntity<ApiResponse<Resena>> getById(
-            @PathVariable Long id
-    ) {
-
-        Resena resena = service.getById(id);
+    public ResponseEntity<ApiResponse<Resena>> obtener(@PathVariable Long id) {
 
         return ResponseEntity.ok(
                 ApiResponse.<Resena>builder()
                         .success(true)
                         .message("Reseña encontrada")
-                        .data(resena)
+                        .data(service.getById(id))
                         .build()
         );
     }
@@ -56,27 +52,22 @@ public class ResenaController {
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<Resena>> crear(
-            @Valid @RequestBody ResenaDTO dto
-    ) {
+            @Valid @RequestBody ResenaDTO dto) {
 
-        Resena nuevaResena = service.save(dto);
-
-        return ResponseEntity.status(201)
-                .body(
-                        ApiResponse.<Resena>builder()
-                                .success(true)
-                                .message("Reseña creada")
-                                .data(nuevaResena)
-                                .build()
-                );
+        return ResponseEntity.status(201).body(
+                ApiResponse.<Resena>builder()
+                        .success(true)
+                        .message("Reseña creada")
+                        .data(service.save(dto))
+                        .build()
+        );
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<Resena>> actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody ResenaDTO dto
-    ) {
+            @Valid @RequestBody ResenaDTO dto) {
 
         return ResponseEntity.ok(
                 ApiResponse.<Resena>builder()
@@ -89,9 +80,7 @@ public class ResenaController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<String>> eliminar(
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<ApiResponse<String>> eliminar(@PathVariable Long id) {
 
         service.eliminar(id);
 
@@ -100,6 +89,19 @@ public class ResenaController {
                         .success(true)
                         .message("Reseña eliminada")
                         .data("OK")
+                        .build()
+        );
+    }
+
+    @GetMapping("/veterinario/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    public ResponseEntity<ApiResponse<List<Resena>>> porVeterinario(@PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<Resena>>builder()
+                        .success(true)
+                        .message("Reseñas del veterinario")
+                        .data(service.listarPorVeterinario(id))
                         .build()
         );
     }
