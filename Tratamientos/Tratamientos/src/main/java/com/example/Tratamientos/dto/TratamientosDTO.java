@@ -17,4 +17,7 @@ public class TratamientosDTO {
 
     @NotNull(message = "El historial es obligatorio")
     private Integer idHistorial;
+
+    @NotNull(message = "El inventario es obligatorio")
+    private Long inventarioId;
 }

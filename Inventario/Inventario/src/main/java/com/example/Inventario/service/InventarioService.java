@@ -71,4 +71,23 @@ public class InventarioService {
 
         repositorio.deleteById(id);
     }
+
+    public void descontarStock(Integer id, Integer cantidad) {
+
+    Inventario inventario = repositorio.findById(id)
+            .orElseThrow(() ->
+                    new EntityNotFoundException(
+                            "Insumo no encontrado"));
+
+    if (inventario.getStock() < cantidad) {
+        throw new RuntimeException(
+                "Stock insuficiente");
+    }
+
+    inventario.setStock(
+            inventario.getStock() - cantidad
+    );
+
+    repositorio.save(inventario);
+}
 }

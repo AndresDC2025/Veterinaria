@@ -1,12 +1,15 @@
 package com.example.Historial_Medico.controller;
 
 import java.util.List;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import com.example.Historial_Medico.dto.*;
-import com.example.Historial_Medico.model.Historial_Medico;
 import com.example.Historial_Medico.service.Historial_MedicoService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -21,12 +24,14 @@ public class Historial_MedicoController {
     @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
     public ResponseEntity<ApiResponse<Historial_MedicoResponse>> crear(
             @Valid @RequestBody Historial_MedicoDTO dto,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
 
         return ResponseEntity.status(201).body(
                 ApiResponse.<Historial_MedicoResponse>builder()
                         .success(true)
-                        .message("Historial médico creado")
+                        .message("Historial médico creado correctamente")
                         .data(service.crear(dto, token))
                         .build()
         );
@@ -35,7 +40,9 @@ public class Historial_MedicoController {
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN', 'VETERINARIO')")
     public ResponseEntity<ApiResponse<List<Historial_MedicoResponse>>> listar(
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
 
         return ResponseEntity.ok(
                 ApiResponse.<List<Historial_MedicoResponse>>builder()
@@ -49,7 +56,9 @@ public class Historial_MedicoController {
     @PreAuthorize("hasAnyRole('USER','ADMIN', 'VETERINARIO')")
     public ResponseEntity<ApiResponse<Historial_MedicoResponse>> obtener(
             @PathVariable Long id,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
 
         return ResponseEntity.ok(
                 ApiResponse.<Historial_MedicoResponse>builder()
@@ -64,12 +73,14 @@ public class Historial_MedicoController {
     public ResponseEntity<ApiResponse<Historial_MedicoResponse>> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody Historial_MedicoDTO dto,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
 
         return ResponseEntity.ok(
                 ApiResponse.<Historial_MedicoResponse>builder()
                         .success(true)
-                        .message("Historial médico actualizado")
+                        .message("Historial médico actualizado correctamente")
                         .data(service.actualizar(id, dto, token))
                         .build()
         );
@@ -84,7 +95,7 @@ public class Historial_MedicoController {
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
                         .success(true)
-                        .message("Historial médico eliminado")
+                        .message("Historial médico eliminado correctamente")
                         .build()
         );
     }

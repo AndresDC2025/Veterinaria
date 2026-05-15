@@ -19,7 +19,11 @@ public class Tratamientos {
 
     private String dosis;
 
+
     private String duracion;
 
     private Integer idHistorial;
+
+    // ID del producto del inventario asociado
+    private Long inventarioId;
 }

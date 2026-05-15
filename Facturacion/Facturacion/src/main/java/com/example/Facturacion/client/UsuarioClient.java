@@ -13,7 +13,7 @@ public class UsuarioClient {
 
     private final WebClient webClient;
 
-    private static final String BASE_URL = "http://localhost:8086/api/usuarios";
+    private static final String BASE_URL = "http://localhost:8086/api/usuarios/";
 
     public UsuarioResponse obtenerUsuario(Integer id, String token) {
 

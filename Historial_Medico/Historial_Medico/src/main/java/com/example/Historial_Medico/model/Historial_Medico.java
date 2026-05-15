@@ -27,5 +27,5 @@ public class Historial_Medico {
     private String tratamiento;
     private String descripcion;
     private Integer idMascota;
-    private LocalDateTime fecha;
+
 }

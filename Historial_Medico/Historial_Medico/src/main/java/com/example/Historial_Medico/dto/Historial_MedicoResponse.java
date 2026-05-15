@@ -13,10 +13,11 @@ import lombok.NoArgsConstructor;
 public class Historial_MedicoResponse {
 
     private Integer id;
-    private LocalDate fecha;
     private String diagnostico;
     private String tratamiento;
     private String descripcion;
-    private Integer mascotaId;
+    private Integer idmascota;
+
+    private MascotaResponse mascota;
 
 }

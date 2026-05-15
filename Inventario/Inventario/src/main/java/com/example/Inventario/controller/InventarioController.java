@@ -103,4 +103,21 @@ public class InventarioController {
                         .build()
         );
     }
+
+    @PutMapping("/descontar/{id}")
+@PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+public ResponseEntity<ApiResponse<Void>> descontarStock(
+        @PathVariable Integer id,
+        @RequestParam Integer cantidad
+) {
+
+    servicio.descontarStock(id, cantidad);
+
+    return ResponseEntity.ok(
+            ApiResponse.<Void>builder()
+                    .success(true)
+                    .message("Stock actualizado")
+                    .build()
+    );
+        }
 }

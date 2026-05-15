@@ -2,20 +2,18 @@ package com.example.Tratamientos.controller;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 import com.example.Tratamientos.dto.ApiResponse;
 import com.example.Tratamientos.dto.TratamientosDTO;
-import com.example.Tratamientos.model.Tratamientos;
+import com.example.Tratamientos.dto.TratamientosResponse;
 import com.example.Tratamientos.service.TratamientosService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/tratamientos")
@@ -23,75 +21,75 @@ public class TratamientosController {
 
     private final TratamientosService service;
 
+    // 🔥 LISTAR
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
-    public ResponseEntity<ApiResponse<List<Tratamientos>>> listar() {
+    @PreAuthorize("hasAnyRole('USER','ADMIN','VETERINARIO')")
+    public ResponseEntity<ApiResponse<List<TratamientosResponse>>> listar(
+            @RequestHeader("Authorization") String token) {
 
         return ResponseEntity.ok(
-                ApiResponse.<List<Tratamientos>>builder()
+                ApiResponse.<List<TratamientosResponse>>builder()
                         .success(true)
                         .message("Lista de tratamientos")
-                        .data(service.listar())
+                        .data(service.listar(token))
                         .build()
         );
     }
 
+    // 🔥 OBTENER
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
-    public ResponseEntity<ApiResponse<Tratamientos>> getById(
-            @PathVariable Long id
-    ) {
-
-        Tratamientos tratamiento = service.getById(id);
+    @PreAuthorize("hasAnyRole('USER','ADMIN','VETERINARIO')")
+    public ResponseEntity<ApiResponse<TratamientosResponse>> obtener(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token) {
 
         return ResponseEntity.ok(
-                ApiResponse.<Tratamientos>builder()
+                ApiResponse.<TratamientosResponse>builder()
                         .success(true)
                         .message("Tratamiento encontrado")
-                        .data(tratamiento)
+                        .data(service.obtener(id, token))
                         .build()
         );
     }
 
+    // 🔥 CREAR
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
-    public ResponseEntity<ApiResponse<Tratamientos>> crear(
-            @Valid @RequestBody TratamientosDTO dto
-    ) {
+    @PreAuthorize("hasAnyRole('ADMIN','VETERINARIO')")
+    public ResponseEntity<ApiResponse<TratamientosResponse>> crear(
+            @Valid @RequestBody TratamientosDTO dto,
+            @RequestHeader("Authorization") String token) {
 
-        Tratamientos tratamiento = service.save(dto);
-
-        return ResponseEntity.status(201)
-                .body(
-                        ApiResponse.<Tratamientos>builder()
-                                .success(true)
-                                .message("Tratamiento creado")
-                                .data(tratamiento)
-                                .build()
-                );
+        return ResponseEntity.status(201).body(
+                ApiResponse.<TratamientosResponse>builder()
+                        .success(true)
+                        .message("Tratamiento creado")
+                        .data(service.crear(dto, token))
+                        .build()
+        );
     }
 
+    // 🔥 ACTUALIZAR
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
-    public ResponseEntity<ApiResponse<Tratamientos>> actualizar(
+    @PreAuthorize("hasAnyRole('ADMIN','VETERINARIO')")
+    public ResponseEntity<ApiResponse<TratamientosResponse>> actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody TratamientosDTO dto
-    ) {
+            @Valid @RequestBody TratamientosDTO dto,
+            @RequestHeader("Authorization") String token) {
 
         return ResponseEntity.ok(
-                ApiResponse.<Tratamientos>builder()
+                ApiResponse.<TratamientosResponse>builder()
                         .success(true)
                         .message("Tratamiento actualizado")
-                        .data(service.actualizar(id, dto))
+                        .data(service.actualizar(id, dto, token))
                         .build()
         );
     }
 
+    // 🔥 ELIMINAR
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> eliminar(
-            @PathVariable Long id
-    ) {
+            @PathVariable Long id) {
 
         service.eliminar(id);
 

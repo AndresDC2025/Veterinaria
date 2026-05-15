@@ -15,15 +15,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Historial_MedicoDTO {
 
-    @NotNull(message = "La fecha es obligatoria")
-    private LocalDate fecha;
-
     @NotBlank(message = "El diagnóstico es obligatorio")
     private String diagnostico;
 
     private String tratamiento;
 
-    private String observaciones;
+    private String descripcion;
 
     @NotNull(message = "El ID de mascota es obligatorio")
     private Long idMascota;
