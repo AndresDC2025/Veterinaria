@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.mascotas.client.TratamientoClient;
 import com.example.mascotas.dto.MascotaDTO;
+import com.example.mascotas.dto.MascotaResponse;
+import com.example.mascotas.dto.TratamientoResponse;
 import com.example.mascotas.model.Mascota;
 import com.example.mascotas.repository.MascotaRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,6 +21,9 @@ import static net.logstash.logback.argument.StructuredArguments.keyValue;
 @RequiredArgsConstructor
 @Slf4j
 public class MascotaService {
+
+    private final MascotaRepository repository;
+    private final TratamientoClient tratamientoClient;
 
     private final MascotaRepository repo;
 
@@ -60,4 +66,21 @@ public class MascotaService {
         log.warn("Eliminar mascota", keyValue("id", id));
         repo.deleteById(id);
     }
+
+    public MascotaResponse obtener(Long id, String token) {
+
+    Mascota mascota = repository.findById(id)
+            .orElseThrow();
+
+    List<TratamientoResponse> tratamientos =
+            tratamientoClient.listarPorMascota(id, token);
+
+    return MascotaResponse.builder()
+            .id(mascota.getId())
+            .nombre(mascota.getNombre())
+            .raza(mascota.getRaza())
+            .edad(mascota.getEdad())
+            .tratamientos(tratamientos)
+            .build();
+}
 }

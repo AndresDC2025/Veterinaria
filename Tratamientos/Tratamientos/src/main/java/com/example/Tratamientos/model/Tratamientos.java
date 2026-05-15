@@ -22,8 +22,12 @@ public class Tratamientos {
 
     private String duracion;
 
+<<<<<<< HEAD
     private Integer idHistorial;
 
     // ID del producto del inventario asociado
     private Long inventarioId;
+=======
+    private Long mascotaId;
+>>>>>>> aa98e270dfe1e4235839e43a47b993446df29bb7
 }

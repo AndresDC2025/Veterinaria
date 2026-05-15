@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.Veterinarios.dto.ApiResponse;
 import com.example.Veterinarios.dto.VeterinarioDTO;
+import com.example.Veterinarios.dto.VeterinarioResponse;
 import com.example.Veterinarios.model.Veterinarios;
 import com.example.Veterinarios.service.VeterinariosService;
 
@@ -38,37 +39,36 @@ public class VeterinariosController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
-    public ResponseEntity<ApiResponse<Veterinarios>> obtener(
-            @PathVariable Long id
+    public ResponseEntity<ApiResponse<VeterinarioResponse>> obtener(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token
     ) {
 
+        log.info("Buscando veterinario con ID: {}", id);
+
         return ResponseEntity.ok(
-                ApiResponse.<Veterinarios>builder()
+                ApiResponse.<VeterinarioResponse>builder()
                         .success(true)
-                        .message("Veterinario encontrado")
-                        .data(servicio.obtener(id))
+                        .message("Veterinario encontrado correctamente")
+                        .data(servicio.obtener(id, token))
                         .build()
         );
     }
-
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
     public ResponseEntity<ApiResponse<Veterinarios>> guardar(
             @Valid @RequestBody VeterinarioDTO dto
     ) {
 
-        Veterinarios veterinario = servicio.guardar(dto);
-
         return ResponseEntity.status(201)
                 .body(
                         ApiResponse.<Veterinarios>builder()
                                 .success(true)
                                 .message("Veterinario creado")
-                                .data(veterinario)
+                                .data(servicio.guardar(dto))
                                 .build()
                 );
     }
-
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
     public ResponseEntity<ApiResponse<Veterinarios>> actualizar(

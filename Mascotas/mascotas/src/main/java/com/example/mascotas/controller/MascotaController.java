@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.example.mascotas.dto.MascotaResponse;
 
 import com.example.mascotas.dto.ApiResponse;
 import com.example.mascotas.dto.MascotaDTO;
@@ -14,44 +15,41 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/mascotas")
-@RequiredArgsConstructor // Es mejor usar esto que @Autowired
+@RequiredArgsConstructor
 public class MascotaController {
 
-    private final MascotaService service; 
+    private final MascotaService service;
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<ApiResponse<Mascota>> obtener(@PathVariable Long id) {
-        log.info("Buscando mascota con ID: {}", id);
-        
+    public ResponseEntity<ApiResponse<MascotaResponse>> obtener(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token) {
+
         return ResponseEntity.ok(
-            ApiResponse.<Mascota>builder()
-                .success(true)
-                .message("Mascota encontrada correctamente")
-                .data(service.obtener(id))
-                .build()
+                ApiResponse.<MascotaResponse>builder()
+                        .success(true)
+                        .message("Mascota encontrada correctamente")
+                        .data(service.obtener(id, token))
+                        .build()
         );
     }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<Mascota>> crear(
-            @Valid @RequestBody MascotaDTO dto) { // CAMBIO: Usar MascotaDTO
+            @Valid @RequestBody MascotaDTO dto) {
 
-        log.info("Creando mascota: {}", dto.getNombre());
-
-        // El servicio de mascota no recibe token, así que llamamos normal
         Mascota nuevaMascota = service.crear(dto);
 
         return ResponseEntity.status(201).body(
-            ApiResponse.<Mascota>builder()
-                .success(true)
-                .message("Mascota creada correctamente")
-                .data(nuevaMascota)
-                .build()
+                ApiResponse.<Mascota>builder()
+                        .success(true)
+                        .message("Mascota creada correctamente")
+                        .data(nuevaMascota)
+                        .build()
         );
     }
 
@@ -59,11 +57,11 @@ public class MascotaController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<List<Mascota>>> listar() {
         return ResponseEntity.ok(
-            ApiResponse.<List<Mascota>>builder()
-                .success(true)
-                .message("Listado obtenido")
-                .data(service.listar())
-                .build()
+                ApiResponse.<List<Mascota>>builder()
+                        .success(true)
+                        .message("Listado obtenido")
+                        .data(service.listar())
+                        .build()
         );
     }
 }

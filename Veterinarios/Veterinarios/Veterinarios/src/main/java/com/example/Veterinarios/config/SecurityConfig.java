@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.*;
 
 import com.example.Veterinarios.security.JwtFilter;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.RequiredArgsConstructor;
 
@@ -49,7 +50,6 @@ public class SecurityConfig {
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
-
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json");
 
@@ -65,7 +65,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, authException) -> {
-
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
 
@@ -76,5 +75,10 @@ public class SecurityConfig {
 
             new ObjectMapper().writeValue(response.getOutputStream(), res);
         };
+    }
+
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
     }
 }
