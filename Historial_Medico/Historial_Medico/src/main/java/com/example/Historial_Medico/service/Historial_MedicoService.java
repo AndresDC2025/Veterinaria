@@ -21,9 +21,6 @@ public class Historial_MedicoService {
     private final Historial_MedicoRepository repo;
     private final MascotaClient mascotaClient;
 
-    // =========================
-    // CREATE
-    // =========================
     public Historial_MedicoResponse crear(Historial_MedicoDTO dto, String token) {
 
         log.info("Creando historial para mascota {}", dto.getIdMascota());
@@ -45,9 +42,7 @@ public class Historial_MedicoService {
         return mapToResponse(guardado, token);
     }
 
-    // =========================
-    // LISTAR
-    // =========================
+
     public List<Historial_MedicoResponse> listar(String token) {
 
         return repo.findAll()
@@ -56,9 +51,7 @@ public class Historial_MedicoService {
                 .toList();
     }
 
-    // =========================
-    // OBTENER
-    // =========================
+
     public Historial_MedicoResponse obtener(Long id, String token) {
 
         Historial_Medico entidad = repo.findById(id.intValue())
@@ -67,9 +60,7 @@ public class Historial_MedicoService {
         return mapToResponse(entidad, token);
     }
 
-    // =========================
-    // ACTUALIZAR
-    // =========================
+
     public Historial_MedicoResponse actualizar(Long id, Historial_MedicoDTO dto, String token) {
 
         Historial_Medico existente = repo.findById(id.intValue())
@@ -89,16 +80,12 @@ public class Historial_MedicoService {
         return mapToResponse(repo.save(existente), token);
     }
 
-    // =========================
-    // ELIMINAR
-    // =========================
+
     public void eliminar(Long id) {
         repo.deleteById(id.intValue());
     }
 
-    // =========================
-    // MAPPER (AQUÍ ESTÁ EL CAMBIO IMPORTANTE)
-    // =========================
+    
     private Historial_MedicoResponse mapToResponse(Historial_Medico entidad, String token) {
 
         var mascota = mascotaClient.obtenerMascota(entidad.getIdMascota().longValue(), token);
@@ -109,7 +96,7 @@ public class Historial_MedicoService {
                 .tratamiento(entidad.getTratamiento())
                 .descripcion(entidad.getDescripcion())
                 .idmascota(entidad.getIdMascota().intValue())
-                .mascota(mascota)   // 🔥 AQUÍ ES LA CLAVE (igual que tu UsuarioService)
+                .mascota(mascota) 
                 .build();
     }
 }

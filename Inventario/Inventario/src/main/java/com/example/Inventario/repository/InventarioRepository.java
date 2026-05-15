@@ -6,8 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.Inventario.model.Inventario;
 
-public interface InventarioRepository
-        extends JpaRepository<Inventario, Integer> {
+public interface InventarioRepository extends JpaRepository<Inventario, Integer> {
 
     List<Inventario> findByNombre(String nombre);
 

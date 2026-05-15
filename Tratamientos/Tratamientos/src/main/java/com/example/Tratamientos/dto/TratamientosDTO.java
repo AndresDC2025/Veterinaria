@@ -6,23 +6,18 @@ import lombok.Data;
 @Data
 public class TratamientosDTO {
 
-    @NotBlank
+    @NotBlank@mesage = ("El nombre es obligatorio")
     private String nombre;
 
     @NotBlank
+    @mesage = ("La dosis es obligatoria")
     private String dosis;
 
     @NotBlank
+    @mesage = ("La duracion es obligatoria")
     private String duracion;
 
-<<<<<<< HEAD
-    @NotNull(message = "El historial es obligatorio")
+    @NotBlank
+    @mesage = ("El ID del historial es obligatorio")
     private Integer idHistorial;
-
-    @NotNull(message = "El inventario es obligatorio")
-    private Long inventarioId;
-=======
-    @NotNull(message = "La mascota es obligatoria")
-    private Long mascotaId;
->>>>>>> aa98e270dfe1e4235839e43a47b993446df29bb7
 }

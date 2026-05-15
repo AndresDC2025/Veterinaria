@@ -5,5 +5,4 @@ import com.example.Veterinaria_.model.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 
-
 }

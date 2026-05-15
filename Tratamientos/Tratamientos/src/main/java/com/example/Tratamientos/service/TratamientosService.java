@@ -35,42 +35,12 @@ public class TratamientosService {
                 keyValue("inventarioId", dto.getInventarioId()));
 
         Tratamientos tratamiento = new Tratamientos();
-=======
-    public List<Tratamientos> listar() {
-        return repository.findAll();
-    }
-
-    public Tratamientos getById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tratamiento no encontrado"));
-    }
-
-    public Tratamientos save(TratamientosDTO dto) {
-
-        Tratamientos tratamiento = Tratamientos.builder()
-                .nombre(dto.getNombre())
-                .dosis(dto.getDosis())
-                .duracion(dto.getDuracion())
-                .mascotaId(dto.getMascotaId())
-                .build();
-
-        return repository.save(tratamiento);
-    }
-
-    public Tratamientos actualizar(Long id, TratamientosDTO dto) {
-
-        Tratamientos tratamiento = getById(id);
->>>>>>> aa98e270dfe1e4235839e43a47b993446df29bb7
 
         tratamiento.setNombre(dto.getNombre());
         tratamiento.setDosis(dto.getDosis());
         tratamiento.setDuracion(dto.getDuracion());
-<<<<<<< HEAD
         tratamiento.setIdHistorial(dto.getIdHistorial());
         tratamiento.setInventarioId(dto.getInventarioId());
-=======
-        tratamiento.setMascotaId(dto.getMascotaId());
->>>>>>> aa98e270dfe1e4235839e43a47b993446df29bb7
 
         Tratamientos guardado = repo.save(tratamiento);
 
@@ -148,14 +118,12 @@ public class TratamientosService {
 
     public void eliminar(Long id) {
 
-<<<<<<< HEAD
         log.info("Eliminando tratamiento",
                 keyValue("id", id));
 
         if (!repo.existsById(id)) {
-=======
         if (!repository.existsById(id)) {
->>>>>>> aa98e270dfe1e4235839e43a47b993446df29bb7
+
             throw new EntityNotFoundException("Tratamiento no encontrado");
         }
 
@@ -178,5 +146,6 @@ public class TratamientosService {
 
     public List<Tratamientos> listarPorMascota(Long mascotaId) {
         return repository.findByMascotaId(mascotaId);
-    }
+        }
+     }
 }
