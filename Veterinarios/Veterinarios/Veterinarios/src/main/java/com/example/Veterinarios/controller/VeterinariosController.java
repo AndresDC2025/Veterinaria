@@ -34,8 +34,12 @@ public class VeterinariosController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
-    @Operation(summary = "Obtener todos los veterinarios", description = "Obtiene una lista de todos los veterinarios")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Veterinarios listados exitosamente")
+    @Operation(
+        summary = "Obtener todos los veterinarios",
+        description = "Obtiene una lista de todos los veterinarios")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Veterinarios listados exitosamente")
     public ResponseEntity<ApiResponse<List<Veterinarios>>> listar() {
 
         return ResponseEntity.ok(
@@ -49,9 +53,14 @@ public class VeterinariosController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
-    @Operation(summary = "Obtener Veterinarios mediante ID", description = "Muestra la informacion de un Veterinario mediante su respectivo ID")
+    @Operation(
+        summary = "Obtener Veterinarios mediante ID",
+        description = "Muestra la informacion de un Veterinario mediante su respectivo ID"
+)
     @ApiResponses(value = {
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description  = "Veterinario encontrado exitosamente",
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200", 
+                description  = "Veterinario encontrado exitosamente",
                 content = @Content(mediaType = "application/json",
                         schema = @Schema(implementation = VeterinarioResponse.class))),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description  = "Veterinario no encontrado")
@@ -110,7 +119,7 @@ public class VeterinariosController {
     @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
     @Operation(
         summary = "Actualizar Veterinario",
-        description = "Actualiza los datos de un Veterinario mediante su respectivo ID"
+        description = "Actualiza los datos de un Veterinario existente"
 )
 @ApiResponses(value = {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -120,6 +129,10 @@ public class VeterinariosController {
                         mediaType = "Aplication/json",
                         schema = @Schema(implementation = VeterinarioResponse.class)
                 )
+        ),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "404",
+                description = "Veterinario no encontrado"
         )
 })
     public ResponseEntity<ApiResponse<Veterinarios>> actualizar(
@@ -141,8 +154,7 @@ public class VeterinariosController {
     @Operation(
         summary = "Eliminar Veterinario",
         description = "Elimina un Veterinario Mediante su ID"
-
-    )
+)
 
     @ApiResponses(value = {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
