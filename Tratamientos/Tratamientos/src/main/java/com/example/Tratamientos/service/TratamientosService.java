@@ -26,8 +26,6 @@ public class TratamientosService {
     private final TratamientosRepository repo;
     private final InventarioClient inventarioClient;
 
-<<<<<<< HEAD
-
     public TratamientosResponse crear(TratamientosDTO dto, String token) {
 
         log.info("Creando tratamiento",
@@ -62,19 +60,19 @@ public class TratamientosService {
 
     public List<TratamientosResponse> listar(String token) {
 
-    return repo.findAll()
-            .stream()
-            .map(t -> {
+        return repo.findAll()
+                .stream()
+                .map(t -> {
 
-                InventarioResponse inv =
-                        inventarioClient.obtenerInventario(
-                                t.getInventarioId(),
-                                token);
+                    InventarioResponse inv =
+                            inventarioClient.obtenerInventario(
+                                    t.getInventarioId(),
+                                    token);
 
-                return construirResponse(t, inv);
-            })
-            .collect(Collectors.toList());
-}
+                    return construirResponse(t, inv);
+                })
+                .collect(Collectors.toList());
+    }
 
     public TratamientosResponse obtener(Long id, String token) {
 
@@ -115,15 +113,12 @@ public class TratamientosService {
         return construirResponse(actualizado, inv);
     }
 
-
     public void eliminar(Long id) {
 
         log.info("Eliminando tratamiento",
                 keyValue("id", id));
 
         if (!repo.existsById(id)) {
-        if (!repository.existsById(id)) {
-
             throw new EntityNotFoundException("Tratamiento no encontrado");
         }
 
@@ -145,7 +140,6 @@ public class TratamientosService {
     }
 
     public List<Tratamientos> listarPorMascota(Long mascotaId) {
-        return repository.findByMascotaId(mascotaId);
-        }
-     }
+        return repo.findByMascotaId(mascotaId);
+    }
 }

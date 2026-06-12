@@ -2,6 +2,10 @@ package com.example.Tratamientos.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import com.example.Tratamientos.dto.ApiResponse;
 import com.example.Tratamientos.dto.TratamientosDTO;
 import com.example.Tratamientos.dto.TratamientosResponse;
@@ -10,17 +14,12 @@ import com.example.Tratamientos.service.TratamientosService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/tratamientos")
 public class TratamientosController {
 
     private final TratamientosService service;
-
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN','VETERINARIO')")
@@ -36,7 +35,6 @@ public class TratamientosController {
         );
     }
 
-
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN','VETERINARIO')")
     public ResponseEntity<ApiResponse<TratamientosResponse>> obtener(
@@ -51,7 +49,6 @@ public class TratamientosController {
                         .build()
         );
     }
-
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','VETERINARIO')")
@@ -88,6 +85,7 @@ public class TratamientosController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> eliminar(
             @PathVariable Long id) {
+
         service.eliminar(id);
 
         return ResponseEntity.ok(
@@ -95,20 +93,6 @@ public class TratamientosController {
                         .success(true)
                         .message("Tratamiento eliminado")
                         .data("OK")
-                        .build()
-        );
-    }
-
-    @GetMapping("/mascota/{mascotaId}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
-    public ResponseEntity<ApiResponse<List<Tratamientos>>> listarPorMascota(
-            @PathVariable Long mascotaId) {
-
-        return ResponseEntity.ok(
-                ApiResponse.<List<Tratamientos>>builder()
-                        .success(true)
-                        .message("Tratamientos por mascota")
-                        .data(service.listarPorMascota(mascotaId))
                         .build()
         );
     }

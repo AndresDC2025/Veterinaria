@@ -12,20 +12,30 @@ import com.example.Veterinarios.dto.VeterinarioResponse;
 import com.example.Veterinarios.model.Veterinarios;
 import com.example.Veterinarios.service.VeterinariosService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/veterinarios")
+@Tag(name= "Veterinarios", description = "Operaciones relacionadas con los veterianrios")
 public class VeterinariosController {
 
     private final VeterinariosService servicio;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    @Operation(summary = "Obtener todos los veterinarios", description = "Obtiene una lista de todos los veterinarios")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Veterinarios listados exitosamente")
     public ResponseEntity<ApiResponse<List<Veterinarios>>> listar() {
 
         return ResponseEntity.ok(
@@ -39,6 +49,14 @@ public class VeterinariosController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    @Operation(summary = "Obtener Veterinarios mediante ID", description = "Muestra la informacion de un Veterinario mediante su respectivo ID")
+    @ApiResponses(value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description  = "Veterinario encontrado exitosamente",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = VeterinarioResponse.class))),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description  = "Veterinario no encontrado")
+
+    })
     public ResponseEntity<ApiResponse<VeterinarioResponse>> obtener(
             @PathVariable Long id,
             @RequestHeader("Authorization") String token
@@ -56,6 +74,25 @@ public class VeterinariosController {
     }
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    @Operation(
+        summary = "Crear un Veterinario",
+        description = "Crea un Veterinario en el sistema"
+)
+    @ApiResponses(value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description =  "Veterinario creado correctamente",
+                content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = VeterinarioResponse.class)
+                )
+        ),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "404",
+                description = "Datos invalidos"
+        )
+})
+
     public ResponseEntity<ApiResponse<Veterinarios>> guardar(
             @Valid @RequestBody VeterinarioDTO dto
     ) {
@@ -71,6 +108,20 @@ public class VeterinariosController {
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    @Operation(
+        summary = "Actualizar Veterinario",
+        description = "Actualiza los datos de un Veterinario mediante su respectivo ID"
+)
+@ApiResponses(value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description =  "Informacion actualizada con exito",
+                content = @Content(
+                        mediaType = "Aplication/json",
+                        schema = @Schema(implementation = VeterinarioResponse.class)
+                )
+        )
+})
     public ResponseEntity<ApiResponse<Veterinarios>> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody VeterinarioDTO dto
@@ -87,10 +138,25 @@ public class VeterinariosController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+        summary = "Eliminar Veterinario",
+        description = "Elimina un Veterinario Mediante su ID"
+
+    )
+
+    @ApiResponses(value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "Veterinario Eliminado correctamente"
+        ),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "404",
+                description = "Veterinario no encontrado"
+        )
+    })
     public ResponseEntity<ApiResponse<String>> eliminar(
             @PathVariable Long id
     ) {
-
         servicio.eliminar(id);
 
         return ResponseEntity.ok(

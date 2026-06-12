@@ -32,11 +32,12 @@ public class FacturacionService {
     }
 
     public Facturacion actualizar(Integer id, FacturacionDTO dto, String token) {
-        
+
+        Facturacion facturaExistente = obtener(id);
+
         facturaExistente.setMonto(dto.getMonto());
         facturaExistente.setMetodoP(dto.getMetodoP());
 
-        
         return repository.save(facturaExistente);
     }
 

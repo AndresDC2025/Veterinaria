@@ -1,23 +1,24 @@
 package com.example.Tratamientos.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class TratamientosDTO {
 
-    @NotBlank@mesage = ("El nombre es obligatorio")
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    @NotBlank
-    @mesage = ("La dosis es obligatoria")
+    @NotBlank(message = "La dosis es obligatoria")
     private String dosis;
 
-    @NotBlank
-    @mesage = ("La duracion es obligatoria")
+    @NotBlank(message = "La duración es obligatoria")
     private String duracion;
 
-    @NotBlank
-    @mesage = ("El ID del historial es obligatorio")
+    @NotNull(message = "El ID del historial es obligatorio")
     private Integer idHistorial;
+
+    @NotNull(message = "El ID del inventario es obligatorio")
+    private Long inventarioId;
 }

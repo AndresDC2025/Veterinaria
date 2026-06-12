@@ -19,8 +19,9 @@ public class Tratamientos {
 
     private String dosis;
 
-
     private String duracion;
 
+    private Integer idHistorial;
 
+    private Long inventarioId;
 }
