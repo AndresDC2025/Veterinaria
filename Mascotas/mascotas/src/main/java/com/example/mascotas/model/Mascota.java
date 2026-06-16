@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @Entity
 @Data
-@Table(name = "mascota")
+@Table(name = "mascotas")
 public class Mascota {
 
     @Id

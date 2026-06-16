@@ -1,6 +1,8 @@
 package com.example.mascotas.controller;
 
 import java.util.List;
+import org.springframework.hateoas.EntityModel;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -28,15 +30,22 @@ public class MascotaController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Obtener mascota por ID", description = "Obtiene los detalles de una mascota por su ID")
-    public ResponseEntity<ApiResponse<MascotaResponse>> obtener(
+    public ResponseEntity<ApiResponse<EntityModel<MascotaResponse>>> obtener(
             @PathVariable Long id,
             @RequestHeader("Authorization") String token) {
 
+        MascotaResponse mascota = service.obtener(id, token);
+        EntityModel<MascotaResponse> recurso = EntityModel.of(mascota);
+        recurso.add(linkTo(methodOn(MascotaController.class).obtener(id, token)).withSelfRel());
+        recurso.add(linkTo(methodOn(MascotaController.class).listar()).withRel("all"));
+        recurso.add(linkTo(methodOn(MascotaController.class).actualizar(id, null, token)).withRel("update"));
+        recurso.add(linkTo(methodOn(MascotaController.class).eliminar(id)).withRel("delete"));
+
         return ResponseEntity.ok(
-                ApiResponse.<MascotaResponse>builder()
+                ApiResponse.<EntityModel<MascotaResponse>>builder()
                         .success(true)
                         .message("Mascota encontrada correctamente")
-                        .data(service.obtener(id, token))
+                        .data(recurso)
                         .build()
         );
     }
@@ -67,6 +76,38 @@ public class MascotaController {
                         .success(true)
                         .message("Listado obtenido")
                         .data(service.listar())
+                        .build()
+        );
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Actualizar mascota", description = "Actualiza los datos de una mascota por su ID")
+    public ResponseEntity<ApiResponse<Mascota>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody MascotaDTO dto,
+            @RequestHeader("Authorization") String token) {
+
+        Mascota mascota = service.actualizar(id, dto);
+        return ResponseEntity.ok(
+                ApiResponse.<Mascota>builder()
+                        .success(true)
+                        .message("Mascota actualizada correctamente")
+                        .data(mascota)
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Eliminar mascota", description = "Elimina una mascota por su ID")
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+
+        service.eliminar(id);
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Mascota eliminada correctamente")
                         .build()
         );
     }
