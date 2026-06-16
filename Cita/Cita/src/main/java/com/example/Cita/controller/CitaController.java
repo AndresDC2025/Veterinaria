@@ -11,18 +11,23 @@ import com.example.Cita.dto.CitaDTO;
 import com.example.Cita.model.Cita;
 import com.example.Cita.service.CitaService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/citas")
 @RequiredArgsConstructor
+@Tag(name = "Citas", description = "Operaciones relacionadas con las citas")
 public class CitaController {
 
     private final CitaService service;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Crear una cita", description = "Crea una nueva cita en el sistema")
     public ResponseEntity<ApiResponse<Cita>> crear(
             @Valid @RequestBody CitaDTO dto,
             @RequestHeader("Authorization") String token) {
@@ -38,6 +43,7 @@ public class CitaController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Operation(summary = "Listar todas las citas", description = "Obtiene una lista de todas las citas registradas")
     public ResponseEntity<ApiResponse<List<Cita>>> listar() {
 
         return ResponseEntity.ok(
@@ -51,6 +57,7 @@ public class CitaController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Operation(summary = "Obtener una cita por ID", description = "Obtiene los detalles de una cita especifica por su ID")
     public ResponseEntity<ApiResponse<Cita>> obtener(@PathVariable Long id) {
 
         return ResponseEntity.ok(
@@ -64,6 +71,7 @@ public class CitaController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Actualizar una cita", description = "Actualiza los datos de una cita existente")
     public ResponseEntity<ApiResponse<Cita>> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody CitaDTO dto) {
@@ -79,6 +87,7 @@ public class CitaController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Eliminar una cita", description = "Elimina una cita del sistema por su ID")
     public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
 
         service.eliminar(id);

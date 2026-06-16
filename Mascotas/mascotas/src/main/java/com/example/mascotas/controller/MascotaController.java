@@ -11,19 +11,23 @@ import com.example.mascotas.dto.MascotaDTO;
 import com.example.mascotas.model.Mascota;
 import com.example.mascotas.service.MascotaService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/mascotas")
 @RequiredArgsConstructor
+@Tag(name = "Mascotas", description = "Operaciones relacionadas con las mascotas")
 public class MascotaController {
 
     private final MascotaService service;
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Obtener mascota por ID", description = "Obtiene los detalles de una mascota por su ID")
     public ResponseEntity<ApiResponse<MascotaResponse>> obtener(
             @PathVariable Long id,
             @RequestHeader("Authorization") String token) {
@@ -39,6 +43,7 @@ public class MascotaController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Crear una mascota", description = "Crea una nueva mascota en el sistema")
     public ResponseEntity<ApiResponse<Mascota>> crear(
             @Valid @RequestBody MascotaDTO dto) {
 
@@ -55,6 +60,7 @@ public class MascotaController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Listar todas las mascotas", description = "Obtiene una lista de todas las mascotas registradas")
     public ResponseEntity<ApiResponse<List<Mascota>>> listar() {
         return ResponseEntity.ok(
                 ApiResponse.<List<Mascota>>builder()

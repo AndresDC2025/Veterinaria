@@ -11,6 +11,9 @@ import com.example.Inventario.dto.InventarioDTO;
 import com.example.Inventario.model.Inventario;
 import com.example.Inventario.service.InventarioService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/inventario")
+@Tag(name = "Inventario", description = "Operaciones relacionadas con el inventario")
 public class InventarioController {
 
     private final InventarioService servicio;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    @Operation(summary = "Listar inventario", description = "Obtiene una lista de todos los insumos del inventario")
     public ResponseEntity<ApiResponse<List<Inventario>>> listar() {
 
         return ResponseEntity.ok(
@@ -38,6 +43,7 @@ public class InventarioController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    @Operation(summary = "Obtener insumo por ID", description = "Obtiene los detalles de un insumo del inventario por su ID")
     public ResponseEntity<ApiResponse<Inventario>> obtener(
             @PathVariable Integer id
     ) {
@@ -53,6 +59,7 @@ public class InventarioController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    @Operation(summary = "Crear un insumo", description = "Agrega un nuevo insumo al inventario")
     public ResponseEntity<ApiResponse<Inventario>> guardar(
             @Valid @RequestBody InventarioDTO dto
     ) {
@@ -73,6 +80,7 @@ public class InventarioController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    @Operation(summary = "Actualizar un insumo", description = "Actualiza los datos de un insumo existente en el inventario")
     public ResponseEntity<ApiResponse<Inventario>> actualizar(
             @PathVariable Integer id,
             @Valid @RequestBody InventarioDTO dto
@@ -89,6 +97,7 @@ public class InventarioController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Eliminar un insumo", description = "Elimina un insumo del inventario por su ID")
     public ResponseEntity<ApiResponse<String>> eliminar(
             @PathVariable Integer id
     ) {
@@ -105,19 +114,20 @@ public class InventarioController {
     }
 
     @PutMapping("/descontar/{id}")
-@PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
-public ResponseEntity<ApiResponse<Void>> descontarStock(
-        @PathVariable Integer id,
-        @RequestParam Integer cantidad
-) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'VETERINARIO')")
+    @Operation(summary = "Descontar stock", description = "Descuenta una cantidad del stock de un insumo")
+    public ResponseEntity<ApiResponse<Void>> descontarStock(
+            @PathVariable Integer id,
+            @RequestParam Integer cantidad
+    ) {
 
-    servicio.descontarStock(id, cantidad);
+        servicio.descontarStock(id, cantidad);
 
-    return ResponseEntity.ok(
-            ApiResponse.<Void>builder()
-                    .success(true)
-                    .message("Stock actualizado")
-                    .build()
-    );
-        }
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Stock actualizado")
+                        .build()
+        );
+    }
 }

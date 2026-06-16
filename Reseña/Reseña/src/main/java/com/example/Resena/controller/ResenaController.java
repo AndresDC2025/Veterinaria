@@ -11,6 +11,9 @@ import com.example.Resena.dto.ResenaDTO;
 import com.example.Resena.model.Resena;
 import com.example.Resena.service.ResenaService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/resena")
+@Tag(name = "Reseñas", description = "Operaciones relacionadas con las reseñas")
 public class ResenaController {
 
     private final ResenaService service;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    @Operation(summary = "Listar todas las reseñas", description = "Obtiene una lista de todas las reseñas registradas")
     public ResponseEntity<ApiResponse<List<Resena>>> listar() {
 
         return ResponseEntity.ok(
@@ -38,6 +43,7 @@ public class ResenaController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    @Operation(summary = "Obtener reseña por ID", description = "Obtiene los detalles de una reseña especifica por su ID")
     public ResponseEntity<ApiResponse<Resena>> obtener(@PathVariable Long id) {
 
         return ResponseEntity.ok(
@@ -51,6 +57,7 @@ public class ResenaController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Operation(summary = "Crear una reseña", description = "Crea una nueva reseña en el sistema")
     public ResponseEntity<ApiResponse<Resena>> crear(
             @Valid @RequestBody ResenaDTO dto) {
 
@@ -65,6 +72,7 @@ public class ResenaController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Operation(summary = "Actualizar una reseña", description = "Actualiza los datos de una reseña existente")
     public ResponseEntity<ApiResponse<Resena>> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody ResenaDTO dto) {
@@ -80,6 +88,7 @@ public class ResenaController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Eliminar una reseña", description = "Elimina una reseña del sistema por su ID")
     public ResponseEntity<ApiResponse<String>> eliminar(@PathVariable Long id) {
 
         service.eliminar(id);
@@ -95,6 +104,7 @@ public class ResenaController {
 
     @GetMapping("/veterinario/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'VETERINARIO')")
+    @Operation(summary = "Reseñas por veterinario", description = "Obtiene todas las reseñas de un veterinario especifico")
     public ResponseEntity<ApiResponse<List<Resena>>> porVeterinario(@PathVariable Long id) {
 
         return ResponseEntity.ok(

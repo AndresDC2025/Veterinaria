@@ -10,8 +10,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,17 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+
+        String path = request.getServletPath();
+
+        return path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/doc")
+                || path.equals("/swagger-ui.html");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain)
@@ -37,7 +50,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
             String token = header.substring(7);
 
-            // 🚨 Evita doble autenticación
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 if (jwtUtil.esValido(token)) {
@@ -59,6 +71,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     );
 
                 } else {
+
                     log.warn("Token inválido");
 
                     res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

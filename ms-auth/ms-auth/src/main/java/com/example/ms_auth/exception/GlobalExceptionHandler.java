@@ -14,7 +14,6 @@ import java.util.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 🔴 VALIDACIÓN
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidation(MethodArgumentNotValidException ex) {
 
@@ -33,7 +32,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 🔐 403
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Object>> handle403(Exception ex) {
         return ResponseEntity.status(403).body(
@@ -44,7 +42,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 🔎 401 (login fallido)
     @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
     public ResponseEntity<ApiResponse<Object>> handleBadCredentials(Exception ex) {
         return ResponseEntity.status(401).body(
@@ -55,7 +52,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 🔎 404
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Object>> handleNotFound(RuntimeException ex) {
         return ResponseEntity.status(404).body(
@@ -66,7 +62,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 💥 500
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGeneral(Exception ex) {
         return ResponseEntity.status(500).body(
