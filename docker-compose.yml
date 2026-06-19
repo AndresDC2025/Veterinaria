@@ -1,0 +1,412 @@
+services:
+
+  # ─── Bases de datos ───────────────────────────────────────────────────────
+  mysql-auth:
+    image: mysql:8
+    container_name: mysql-auth
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ms-user
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3310:3306"
+    volumes:
+      - mysql_auth_data:/var/lib/mysql
+    networks:
+      - veterinaria-network
+
+  mysql-veterinarios:
+    image: mysql:8
+    container_name: mysql-veterinarios
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ms-veterinario
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3311:3306"
+    volumes:
+      - mysql_veterinarios_data:/var/lib/mysql
+    networks:
+      - veterinaria-network
+
+  mysql-mascotas:
+    image: mysql:8
+    container_name: mysql-mascotas
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ms-mascota
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3312:3306"
+    volumes:
+      - mysql_mascotas_data:/var/lib/mysql
+    networks:
+      - veterinaria-network
+
+  mysql-usuarios:
+    image: mysql:8
+    container_name: mysql-usuarios
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ms-usuario
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3313:3306"
+    volumes:
+      - mysql_usuarios_data:/var/lib/mysql
+    networks:
+      - veterinaria-network
+
+  mysql-facturacion:
+    image: mysql:8
+    container_name: mysql-facturacion
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ms-facturacion
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3314:3306"
+    volumes:
+      - mysql_facturacion_data:/var/lib/mysql
+    networks:
+      - veterinaria-network
+
+  mysql-tratamientos:
+    image: mysql:8
+    container_name: mysql-tratamientos
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ms-tratamiento
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3315:3306"
+    volumes:
+      - mysql_tratamientos_data:/var/lib/mysql
+    networks:
+      - veterinaria-network
+
+  mysql-inventario:
+    image: mysql:8
+    container_name: mysql-inventario
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ms-inventario
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3316:3306"
+    volumes:
+      - mysql_inventario_data:/var/lib/mysql
+    networks:
+      - veterinaria-network
+
+  mysql-resena:
+    image: mysql:8
+    container_name: mysql-resena
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ms-resena
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3317:3306"
+    volumes:
+      - mysql_resena_data:/var/lib/mysql
+    networks:
+      - veterinaria-network
+
+  mysql-citas:
+    image: mysql:8
+    container_name: mysql-citas
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ms-citas
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3318:3306"
+    volumes:
+      - mysql_citas_data:/var/lib/mysql
+    networks:
+      - veterinaria-network
+
+  mysql-historial:
+    image: mysql:8
+    container_name: mysql-historial
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ms-historial_medico
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3319:3306"
+    volumes:
+      - mysql_historial_data:/var/lib/mysql
+    networks:
+      - veterinaria-network
+
+  # ─── Infraestructura ──────────────────────────────────────────────────────
+  ms-eureka:
+    build: ./ms-eureka
+    container_name: ms-eureka
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+    networks:
+      - veterinaria-network
+
+  ms-gateway:
+    build: ./ms-gateway
+    container_name: ms-gateway
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+    depends_on:
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+  # ─── Microservicios ────────────────────────────────────────────────────────
+  ms-auth:
+    build: ./ms-auth/ms-auth
+    container_name: ms-auth
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: mysql-auth
+      DB_PORT: 3306
+      DB_NAME: ms-user
+      DB_USER: appuser
+      DB_PASSWORD: "1234"
+      JWT_SECRET: ${JWT_SECRET:-clave_veterinaria_super_secreta_2026_muy_larga}
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
+    depends_on:
+      - mysql-auth
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+  ms-veterinarios:
+    build: ./Veterinarios/Veterinarios/Veterinarios
+    container_name: ms-veterinarios
+    restart: unless-stopped
+    ports:
+      - "8084:8084"
+    environment:
+      DB_HOST: mysql-veterinarios
+      DB_PORT: 3306
+      DB_NAME: ms-veterinario
+      DB_USER: appuser
+      DB_PASSWORD: "1234"
+      JWT_SECRET: ${JWT_SECRET:-clave_veterinaria_super_secreta_2026_muy_larga}
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+    depends_on:
+      - mysql-veterinarios
+      - ms-auth
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+  ms-mascotas:
+    build: ./Mascotas/mascotas
+    container_name: ms-mascotas
+    restart: unless-stopped
+    ports:
+      - "8085:8085"
+    environment:
+      DB_HOST: mysql-mascotas
+      DB_PORT: 3306
+      DB_NAME: ms-mascota
+      DB_USER: appuser
+      DB_PASSWORD: "1234"
+      JWT_SECRET: ${JWT_SECRET:-clave_veterinaria_super_secreta_2026_muy_larga}
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+    depends_on:
+      - mysql-mascotas
+      - ms-auth
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+  ms-usuarios:
+    build: ./Usuarios/Usuarios
+    container_name: ms-usuarios
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    environment:
+      DB_HOST: mysql-usuarios
+      DB_PORT: 3306
+      DB_NAME: ms-usuario
+      DB_USER: appuser
+      DB_PASSWORD: "1234"
+      JWT_SECRET: ${JWT_SECRET:-clave_veterinaria_super_secreta_2026_muy_larga}
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+    depends_on:
+      - mysql-usuarios
+      - ms-mascotas
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+  ms-facturacion:
+    build: ./Facturacion/Facturacion
+    container_name: ms-facturacion
+    restart: unless-stopped
+    ports:
+      - "8087:8087"
+    environment:
+      DB_HOST: mysql-facturacion
+      DB_PORT: 3306
+      DB_NAME: ms-facturacion
+      DB_USER: appuser
+      DB_PASSWORD: "1234"
+      JWT_SECRET: ${JWT_SECRET:-clave_veterinaria_super_secreta_2026_muy_larga}
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+    depends_on:
+      - mysql-facturacion
+      - ms-auth
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+  ms-tratamientos:
+    build: ./Tratamientos/Tratamientos
+    container_name: ms-tratamientos
+    restart: unless-stopped
+    ports:
+      - "8089:8089"
+    environment:
+      DB_HOST: mysql-tratamientos
+      DB_PORT: 3306
+      DB_NAME: ms-tratamiento
+      DB_USER: appuser
+      DB_PASSWORD: "1234"
+      JWT_SECRET: ${JWT_SECRET:-clave_veterinaria_super_secreta_2026_muy_larga}
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+    depends_on:
+      - mysql-tratamientos
+      - ms-inventario
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+  ms-inventario:
+    build: ./Inventario/Inventario
+    container_name: ms-inventario
+    restart: unless-stopped
+    ports:
+      - "8092:8092"
+    environment:
+      DB_HOST: mysql-inventario
+      DB_PORT: 3306
+      DB_NAME: ms-inventario
+      DB_USER: appuser
+      DB_PASSWORD: "1234"
+      JWT_SECRET: ${JWT_SECRET:-clave_veterinaria_super_secreta_2026_muy_larga}
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+    depends_on:
+      - mysql-inventario
+      - ms-auth
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+  ms-resena:
+    build: ./Reseña/Reseña
+    container_name: ms-resena
+    restart: unless-stopped
+    ports:
+      - "8094:8094"
+    environment:
+      DB_HOST: mysql-resena
+      DB_PORT: 3306
+      DB_NAME: ms-resena
+      DB_USER: appuser
+      DB_PASSWORD: "1234"
+      JWT_SECRET: ${JWT_SECRET:-clave_veterinaria_super_secreta_2026_muy_larga}
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+    depends_on:
+      - mysql-resena
+      - ms-veterinarios
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+  ms-citas:
+    build: ./Cita/Cita
+    container_name: ms-citas
+    restart: unless-stopped
+    ports:
+      - "8095:8095"
+    environment:
+      DB_HOST: mysql-citas
+      DB_PORT: 3306
+      DB_NAME: ms-citas
+      DB_USER: appuser
+      DB_PASSWORD: "1234"
+      JWT_SECRET: ${JWT_SECRET:-clave_veterinaria_super_secreta_2026_muy_larga}
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+    depends_on:
+      - mysql-citas
+      - ms-facturacion
+      - ms-usuarios
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+  ms-historial:
+    build: ./Historial_Medico/Historial_Medico
+    container_name: ms-historial
+    restart: unless-stopped
+    ports:
+      - "8098:8098"
+    environment:
+      DB_HOST: mysql-historial
+      DB_PORT: 3306
+      DB_NAME: ms-historial_medico
+      DB_USER: appuser
+      DB_PASSWORD: "1234"
+      JWT_SECRET: ${JWT_SECRET:-clave_veterinaria_super_secreta_2026_muy_larga}
+      EUREKA_URL: http://ms-eureka:8761/eureka/
+    depends_on:
+      - mysql-historial
+      - ms-mascotas
+      - ms-eureka
+    networks:
+      - veterinaria-network
+
+networks:
+  veterinaria-network:
+
+volumes:
+  mysql_auth_data:
+  mysql_veterinarios_data:
+  mysql_mascotas_data:
+  mysql_usuarios_data:
+  mysql_facturacion_data:
+  mysql_tratamientos_data:
+  mysql_inventario_data:
+  mysql_resena_data:
+  mysql_citas_data:
+  mysql_historial_data:

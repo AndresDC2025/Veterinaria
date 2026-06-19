@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: veterinarios
+  datasource:
+    url: "jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:ms-veterinario}"
+    username: "${DB_USER:root}"
+    password: "${DB_PASSWORD:}"
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+  flyway:
+    enabled: true
+
+server:
+  port: "${PORT:8084}"
+
+jwt:
+  secret: "${JWT_SECRET:clave_veterinaria_super_secreta_2026_muy_larga}"
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /doc/swagger-ui.html
+
+eureka:
+  client:
+    service-url:
+      defaultZone: "${EUREKA_URL:http://localhost:8761/eureka/}"
+  instance:
+    prefer-ip-address: true

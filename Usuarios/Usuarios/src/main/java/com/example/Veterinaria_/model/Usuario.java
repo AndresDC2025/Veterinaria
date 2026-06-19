@@ -1,0 +1,35 @@
+package com.example.Veterinaria_.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+
+
+@Slf4j
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Entity
+@Table(name="usuarios")
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    
+    private String nombre;
+    private String rut;
+    private String email;
+    private String telefono;
+    private String direccion;
+    private Integer id_mascota;
+
+}
